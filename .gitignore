@@ -1,3 +1,6 @@
+# Ignore Maven related output
+/target
+
 *.class
 
 # Package Files #
