@@ -7,7 +7,7 @@ package com.github.dieterdepaepe.jsearch.search.statespace;
  * @param <T> the type of search states to be used for this manager
  * @author Dieter De Paepe
  */
-public interface Manager<T extends SearchState> {
+public interface Manager<T extends SearchNode> {
     /**
      * Indicates whether or not a {@code Solver} should continue its search.
      * @return true if search should continue
