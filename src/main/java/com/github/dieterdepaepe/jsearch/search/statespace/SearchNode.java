@@ -27,4 +27,13 @@ public interface SearchNode {
      * @return the cost
      */
     public double getCost();
+
+    /**
+     * Returns a (lightweight) object that represents the search space state that has been reached by this node.
+     * <p/>
+     * When 2 {@code SearchNode}s have an {@code equal} search space state, the most expensive node can be dropped
+     * from the search by a solver.
+     * @return a non-null object
+     */
+    public Object getSearchSpaceState();
 }
