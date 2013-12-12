@@ -28,6 +28,6 @@ public interface Solver {
     public <T extends SearchNode, U> void solve(InformedSearchNode<T> startNode,
                                                  U environment,
                                                  Heuristic<? super T, ? super U> heuristic,
-                                                 SearchNodeGenerator<? super T, ? super U> searchNodeGenerator,
+                                                 SearchNodeGenerator<T, U> searchNodeGenerator,
                                                  Manager<? super T> manager);
 }

@@ -28,4 +28,8 @@ public class InformedSearchNode<T extends SearchNode> {
     public double getEstimatedRemainingCost() {
         return estimatedRemainingCost;
     }
+
+    public double getEstimatedTotalCost() {
+        return getSearchNode().getCost() + getEstimatedRemainingCost();
+    }
 }

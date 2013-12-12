@@ -18,7 +18,7 @@ public interface Manager<T extends SearchNode> {
      * Handles an (intermediate) solution found by a {@code Solver}.
      * @param solution the solution
      */
-    public void registerSolution(Solution<T> solution);
+    public void registerSolution(Solution<? extends T> solution);
 
     /**
      * Provides a cost bound for a {@code Solver}, indicating it should not look for solutions whose cost is greater
