@@ -25,4 +25,19 @@ public enum Move {
     public int getDeltaRow() {
         return deltaRow;
     }
+
+    /**
+     * Gets the opposite move for the given move.
+     * @param move a move
+     * @return the move that would cancel out the given move
+     */
+    public static Move inverse(Move move) {
+        switch (move) {
+            case LEFT: return RIGHT;
+            case RIGHT: return LEFT;
+            case UP: return DOWN;
+            case DOWN: return UP;
+            default: throw new IllegalArgumentException();
+        }
+    }
 }

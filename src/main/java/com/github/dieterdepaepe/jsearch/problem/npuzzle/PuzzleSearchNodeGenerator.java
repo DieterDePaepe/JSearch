@@ -38,4 +38,9 @@ public class PuzzleSearchNodeGenerator implements SearchNodeGenerator<PuzzleSear
 
         return result;
     }
+
+    public InformedSearchNode<PuzzleSearchNode> createStartState(PuzzleFields fieldState, PuzzleEnvironment environment, Heuristic<PuzzleSearchNode, PuzzleEnvironment> heuristic) {
+        PuzzleSearchNode node = new PuzzleSearchNode(fieldState, null, 0, environment.getTargetState().equals(fieldState));
+        return new InformedSearchNode<>(node, heuristic.estimateRemainingCost(node, environment));
+    }
 }
