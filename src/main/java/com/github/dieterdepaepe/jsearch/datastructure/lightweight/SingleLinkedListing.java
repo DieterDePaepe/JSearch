@@ -9,12 +9,15 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * A list-like structure that allows reuse of prefixes of other listings to conserve memory.
+ * A list-like structure that allows reuse of prefixes of other listings to conserve memory. An empty listing is
+ * represented by the {@code null} value.
  * <p/>
  * This class is implemented as a single-linked list, where only information about the elements is stored. It is
  * handy for conserving memory when storing lists with a high amount of shared data. Typical use cases are graph
  * traversal or action tracking in search problems.
  * <p/>
+ * Due to its structure, this class does not implement {@code Iterable}, but static helper methods allow a similar
+ * usage.
  * <h2>Memory usage</h2>
  * Assume we have a tree structure in which we want to track the path of each leaf to the root.
  * The tree has the following properties:
@@ -79,36 +82,12 @@ public class SingleLinkedListing<T> {
         return element;
     }
 
-    /**
-     * Returns a mutable list containing the items stored in this listing.
-     * @param invert true if the list should be inverted (so the last added element is at the front of the returned list)
-     * @return a mutable list that is not backed by this listing
-     */
-    public List<T> toList(boolean invert) {
-        List<T> result = new ArrayList<T>();
-        for (T element : this.fromEndToStart())
-            result.add(element);
-
-        if (!invert)
-            Collections.reverse(result);
-
-        return result;
-    }
-
-    /**
-     * Returns an {@code Iterable} that will start at the end of this listing and work its way to the front.
-     * @return an {@code Iterable} whose {@code Iterator}s will not support removal
-     */
-    public Iterable<T> fromEndToStart() {
-        return new LinkIterable();
-    }
-
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder("[");
 
         int elementsToPrint = 10;
-        List<T> elements = Lists.newArrayList(Iterables.limit(this.fromEndToStart(), elementsToPrint + 1));
+        List<T> elements = Lists.newArrayList(Iterables.limit(SingleLinkedListing.fromEndToStart(this), elementsToPrint + 1));
         Collections.reverse(elements);
 
         if (elements.size() > elementsToPrint)
@@ -125,10 +104,48 @@ public class SingleLinkedListing<T> {
         return builder.toString();
     }
 
-    private class LinkIterable implements Iterable<T> {
+    /**
+     * Creates a new list containing the items stored in the specified listing.
+     * @param listing the listing to create a list of
+     * @param invert true if the list should be inverted (so the last added element is at the front of the returned list)
+     * @return a mutable list that is not backed by the listing
+     */
+    public static <T> List<T> toList(SingleLinkedListing<T> listing, boolean invert) {
+        List<T> result = new ArrayList<>();
+
+        if (listing == null)
+            return result;
+
+        for (T element : fromEndToStart(listing))
+            result.add(element);
+
+        if (!invert)
+            Collections.reverse(result);
+
+        return result;
+    }
+
+    /**
+     * Returns an {@code Iterable} that will start at the end of the specified listing and work its way to the front.
+     * @return an {@code Iterable} whose {@code Iterator}s will not support removal
+     */
+    public static <T> Iterable<T> fromEndToStart(SingleLinkedListing<T> listing) {
+        if (listing == null)
+            return Collections.emptyList();
+        else
+            return new LinkIterable<>(listing);
+    }
+
+    private static class LinkIterable<T> implements Iterable<T> {
+        private SingleLinkedListing<T> listing;
+
+        private LinkIterable(SingleLinkedListing<T> listing) {
+            this.listing = listing;
+        }
+
         @Override
         public Iterator<T> iterator() {
-            return new LinkIterator<T>(SingleLinkedListing.this);
+            return new LinkIterator<T>(listing);
         }
     }
 

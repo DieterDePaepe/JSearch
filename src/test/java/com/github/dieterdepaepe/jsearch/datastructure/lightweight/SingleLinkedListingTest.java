@@ -17,29 +17,37 @@ public class SingleLinkedListingTest {
     @Test
     public void testUsage() {
         SingleLinkedListing<String> listing = new SingleLinkedListing<String>("A");
-        listing = new SingleLinkedListing<String>(listing, "B");
-        listing = new SingleLinkedListing<String>(listing, "C");
-        listing = new SingleLinkedListing<String>(listing, "D");
+        listing = new SingleLinkedListing<>(listing, "B");
+        listing = new SingleLinkedListing<>(listing, "C");
+        listing = new SingleLinkedListing<>(listing, "D");
 
         SingleLinkedListing<String> listingX = new SingleLinkedListing<String>(listing, "X");
 
         SingleLinkedListing<String> listingYZ = new SingleLinkedListing<String>(listing, "Y");
-        listingYZ = new SingleLinkedListing<String>(listingYZ, "Z");
+        listingYZ = new SingleLinkedListing<>(listingYZ, "Z");
 
         List<String> expectedX = Arrays.asList("A", "B", "C", "D", "X");
         List<String> expectedYZ = Arrays.asList("A", "B", "C", "D", "Y", "Z");
 
         assertEquals(listingX.getPrefixListing(), listing);
 
-        assertEquals(listingX.toList(false), expectedX);
-        assertEquals(listingYZ.toList(false), expectedYZ);
+        assertEquals(SingleLinkedListing.toList(listingX, false), expectedX);
+        assertEquals(SingleLinkedListing.toList(listingYZ, false), expectedYZ);
 
         Collections.reverse(expectedX);
         Collections.reverse(expectedYZ);
 
-        assertEquals(Lists.newArrayList(listingX.fromEndToStart()), expectedX);
-        assertEquals(Lists.newArrayList(listingYZ.fromEndToStart()), expectedYZ);
-        assertEquals(Lists.newArrayList(listingX.toList(true)), expectedX);
-        assertEquals(Lists.newArrayList(listingYZ.toList(true)), expectedYZ);
+        assertEquals(Lists.newArrayList(SingleLinkedListing.fromEndToStart(listingX)), expectedX);
+        assertEquals(Lists.newArrayList(SingleLinkedListing.fromEndToStart(listingYZ)), expectedYZ);
+        assertEquals(Lists.newArrayList(SingleLinkedListing.fromEndToStart(listingX)), expectedX);
+        assertEquals(Lists.newArrayList(SingleLinkedListing.fromEndToStart(listingYZ)), expectedYZ);
+    }
+
+    @Test
+    public void testEmptyList() {
+        SingleLinkedListing<String> listing = null;
+
+        assertEquals(Lists.newArrayList(SingleLinkedListing.fromEndToStart(listing)), Collections.emptyList());
+        assertEquals(SingleLinkedListing.toList(listing, false), Collections.emptyList());
     }
 }
