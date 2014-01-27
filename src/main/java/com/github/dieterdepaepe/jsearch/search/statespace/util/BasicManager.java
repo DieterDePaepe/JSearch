@@ -5,7 +5,8 @@ import com.github.dieterdepaepe.jsearch.search.statespace.SearchNode;
 import com.github.dieterdepaepe.jsearch.search.statespace.Solution;
 
 /**
- * Basic implementation of {@code Manager}. It will instruct to continue searching until an optimal solution is found.
+ * Basic implementation of {@code Manager} meant for a single search by a single solver.
+ * It will instruct to continue searching until an optimal solution is found.
  * Any intermediate solutions found will be passed as a cost bound to the solver in order to speed up the search.
  * <p/>
  * This implementation is not thread-safe.
@@ -25,7 +26,7 @@ public class BasicManager<T extends SearchNode> implements Manager<T> {
 
     @Override
     public void registerSolution(Solution<? extends T> solution) {
-        if (bestSolutionSoFar == null || bestSolutionSoFar.getNode().getCost() > solution.getNode().getCost())
+        if (bestSolutionSoFar == null || solution.isOptimal() || bestSolutionSoFar.getNode().getCost() > solution.getNode().getCost())
             bestSolutionSoFar = solution;
     }
 
