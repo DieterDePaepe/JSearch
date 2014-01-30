@@ -7,7 +7,7 @@ package com.github.dieterdepaepe.jsearch.search.statespace;
  * @param <T> the type of the {@code SearchNode} contained in this class
  * @author Dieter De Paepe
  */
-public class InformedSearchNode<T extends SearchNode> {
+public class InformedSearchNode<T extends SearchNode> implements Comparable<InformedSearchNode<T>> {
     private final T searchNode;
     private final double estimatedRemainingCost;
 
@@ -31,5 +31,10 @@ public class InformedSearchNode<T extends SearchNode> {
 
     public double getEstimatedTotalCost() {
         return getSearchNode().getCost() + getEstimatedRemainingCost();
+    }
+
+    @Override
+    public int compareTo(InformedSearchNode<T> o) {
+        return Double.compare(getEstimatedTotalCost(), o.getEstimatedTotalCost());
     }
 }
