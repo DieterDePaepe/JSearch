@@ -35,15 +35,15 @@ public class DepthFirstSolverTest {
         //   |      H
         //   I
 
-        DummySearchNode a = new DummySearchNode(0, 0, false);
-        DummySearchNode b = new DummySearchNode(1, 0, false);
-        DummySearchNode c = new DummySearchNode(0.5, 1.5, false);
-        DummySearchNode d = new DummySearchNode(2, 1, false);
-        DummySearchNode e = new DummySearchNode(0, 4, false);
-        DummySearchNode f = new DummySearchNode(5, 0, true);
-        DummySearchNode g = new DummySearchNode(4, 2, false);
-        DummySearchNode h = new DummySearchNode(7, 0, true);
-        DummySearchNode i = new DummySearchNode(8, 0, true);
+        DummySearchNode a = new DummySearchNode("a", 0, 0, false);
+        DummySearchNode b = new DummySearchNode("b", 1, 0, false);
+        DummySearchNode c = new DummySearchNode("c", 0.5, 1.5, false);
+        DummySearchNode d = new DummySearchNode("d", 2, 1, false);
+        DummySearchNode e = new DummySearchNode("e", 0, 4, false);
+        DummySearchNode f = new DummySearchNode("f", 5, 0, true);
+        DummySearchNode g = new DummySearchNode("g", 4, 2, false);
+        DummySearchNode h = new DummySearchNode("h", 7, 0, true);
+        DummySearchNode i = new DummySearchNode("i", 8, 0, true);
 
         ListMultimap<DummySearchNode, DummySearchNode> successors = ArrayListMultimap.create();
         successors.put(a, c);
