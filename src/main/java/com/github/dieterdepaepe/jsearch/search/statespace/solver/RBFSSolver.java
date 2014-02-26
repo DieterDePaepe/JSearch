@@ -2,6 +2,7 @@ package com.github.dieterdepaepe.jsearch.search.statespace.solver;
 
 import com.github.dieterdepaepe.jsearch.search.statespace.*;
 import com.github.dieterdepaepe.jsearch.search.statespace.util.BasicSolution;
+import com.google.common.collect.Iterables;
 
 import java.util.*;
 
@@ -71,13 +72,13 @@ public class RBFSSolver implements Solver {
                 return;
             }
 
-            List<InformedSearchNode<T>> successors = generator.generateSuccessorNodes(bestCostNode.searchNode, environment, heuristic);
-            if (successors.isEmpty()) {
+            Iterable<InformedSearchNode<T>> successors = generator.generateSuccessorNodes(bestCostNode.searchNode, environment, heuristic);
+            if (Iterables.isEmpty(successors)) {
                 bestCostNode.minimumSolutionCost = Double.POSITIVE_INFINITY;
                 continue;
             }
 
-            List<RBFSSearchNode<T>> rbfsSuccessors = new ArrayList<>(successors.size());
+            List<RBFSSearchNode<T>> rbfsSuccessors = new ArrayList<>();
             for (InformedSearchNode<T> successor : successors) {
                 // By taking the minimum solution cost of the parent node into account, we can prevent unneeded backtracking
                 // caused by using the minimum solution cost as the cutoff cost for a next iteration.

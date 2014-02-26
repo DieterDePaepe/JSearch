@@ -28,7 +28,7 @@ public class LoggingGenerator<T extends SearchNode, U> implements SearchNodeGene
     }
 
     @Override
-    public List<InformedSearchNode<T>> generateSuccessorNodes(T node, U environment, Heuristic<? super T, ? super U> heuristic) {
+    public Iterable<InformedSearchNode<T>> generateSuccessorNodes(T node, U environment, Heuristic<? super T, ? super U> heuristic) {
         expandedNodes.add(node);
         return wrappedGenerator.generateSuccessorNodes(node, environment, heuristic);
     }

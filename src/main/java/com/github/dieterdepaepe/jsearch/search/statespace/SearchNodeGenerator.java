@@ -1,7 +1,5 @@
 package com.github.dieterdepaepe.jsearch.search.statespace;
 
-import java.util.List;
-
 /**
  * A class defining how one {@link SearchNode} can transition into other {@code SearchNode}s. In other words:
  * it defines how the search <a href="http://en.wikipedia.org/wiki/State_space">state space</a> is formed and is
@@ -39,5 +37,5 @@ public interface SearchNodeGenerator<T extends SearchNode, U> {
      * @param heuristic the heuristic to use
      * @return the new states, enriched with an estimate of the heuristic, in no particular order
      */
-    public List<InformedSearchNode<T>> generateSuccessorNodes(T node, U environment, Heuristic<? super T, ? super U> heuristic);
+    public Iterable<InformedSearchNode<T>> generateSuccessorNodes(T node, U environment, Heuristic<? super T, ? super U> heuristic);
 }

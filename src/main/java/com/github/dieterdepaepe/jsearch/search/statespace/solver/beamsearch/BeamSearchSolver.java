@@ -1,8 +1,8 @@
 package com.github.dieterdepaepe.jsearch.search.statespace.solver.beamsearch;
 
 import com.github.dieterdepaepe.jsearch.search.statespace.*;
-import com.github.dieterdepaepe.jsearch.search.statespace.solver.beamsearch.GenerationSelection;
 import com.github.dieterdepaepe.jsearch.search.statespace.util.BasicSolution;
+import com.google.common.collect.Iterables;
 
 import java.util.*;
 
@@ -69,7 +69,7 @@ public class BeamSearchSolver implements Solver {
 
             children = new ArrayList<>();
             for (InformedSearchNode<T> parent : selection.getSelectedNodes())
-                children.addAll(searchNodeGenerator.generateSuccessorNodes(parent.getSearchNode(), environment, heuristic));
+                Iterables.addAll(children, searchNodeGenerator.generateSuccessorNodes(parent.getSearchNode(), environment, heuristic));
         }
 
         // The search space has been exhausted. We can compare the best solution encountered against the best estimate

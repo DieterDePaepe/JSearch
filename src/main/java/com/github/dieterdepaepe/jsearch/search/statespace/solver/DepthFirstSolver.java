@@ -2,6 +2,7 @@ package com.github.dieterdepaepe.jsearch.search.statespace.solver;
 
 import com.github.dieterdepaepe.jsearch.search.statespace.*;
 import com.github.dieterdepaepe.jsearch.search.statespace.util.BasicSolution;
+import com.google.common.collect.Lists;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -57,7 +58,7 @@ public class DepthFirstSolver implements Solver {
             } else {
                 // Add generated successor nodes in reverse order to the stack, so they will be evaluated according
                 // to the order defined by the generator.
-                List<InformedSearchNode<T>> successors = searchNodeGenerator.generateSuccessorNodes(searchNode, environment, heuristic);
+                List<InformedSearchNode<T>> successors = Lists.newArrayList(searchNodeGenerator.generateSuccessorNodes(searchNode, environment, heuristic));
                 for (int i = successors.size() - 1; i >= 0; i--)
                     nodesStack.addFirst(successors.get(i));
             }
