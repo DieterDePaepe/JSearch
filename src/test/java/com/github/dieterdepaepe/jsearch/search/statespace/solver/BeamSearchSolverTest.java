@@ -4,6 +4,7 @@ import com.github.dieterdepaepe.jsearch.problem.dummy.DummyGenerator;
 import com.github.dieterdepaepe.jsearch.problem.dummy.DummyHeuristic;
 import com.github.dieterdepaepe.jsearch.problem.dummy.DummySearchNode;
 import com.github.dieterdepaepe.jsearch.search.statespace.InformedSearchNode;
+import com.github.dieterdepaepe.jsearch.search.statespace.SearchNode;
 import com.github.dieterdepaepe.jsearch.search.statespace.dev.LoggingGenerator;
 import com.github.dieterdepaepe.jsearch.search.statespace.solver.beamsearch.BeamSearchSolver;
 import com.github.dieterdepaepe.jsearch.search.statespace.solver.beamsearch.SelectNBest;
@@ -59,7 +60,7 @@ public class BeamSearchSolverTest {
         LoggingGenerator<DummySearchNode, Object> generator = new LoggingGenerator<>(new DummyGenerator(successors));
         DummyHeuristic heuristic = new DummyHeuristic();
         BasicManager<DummySearchNode> manager = new BasicManager<>();
-        BeamSearchSolver solver = new BeamSearchSolver(new SelectNBest(1));
+        BeamSearchSolver<SearchNode, Object> solver = new BeamSearchSolver<>(new SelectNBest(1));
 
         solver.solve(new InformedSearchNode<>(a, 0), null, heuristic, generator, manager);
 
@@ -104,7 +105,7 @@ public class BeamSearchSolverTest {
         LoggingGenerator<DummySearchNode, Object> generator = new LoggingGenerator<>(new DummyGenerator(successors));
         DummyHeuristic heuristic = new DummyHeuristic();
         BasicManager<DummySearchNode> manager = new BasicManager<>();
-        BeamSearchSolver solver = new BeamSearchSolver(new SelectNBest(2));
+        BeamSearchSolver<SearchNode, Object> solver = new BeamSearchSolver<>(new SelectNBest(2));
 
         solver.solve(new InformedSearchNode<>(a, 0), null, heuristic, generator, manager);
 
@@ -149,7 +150,7 @@ public class BeamSearchSolverTest {
         LoggingGenerator<DummySearchNode, Object> generator = new LoggingGenerator<>(new DummyGenerator(successors));
         DummyHeuristic heuristic = new DummyHeuristic();
         BasicManager<DummySearchNode> manager = new BasicManager<>();
-        BeamSearchSolver solver = new BeamSearchSolver(new SelectNBest(3));
+        BeamSearchSolver<SearchNode, Object> solver = new BeamSearchSolver<>(new SelectNBest(3));
 
         solver.solve(new InformedSearchNode<>(a, 0), null, heuristic, generator, manager);
 

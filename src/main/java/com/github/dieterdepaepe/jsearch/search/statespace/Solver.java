@@ -6,9 +6,11 @@ package com.github.dieterdepaepe.jsearch.search.statespace;
  * A {@code Solver} bundles all functionality on how to solve a problem, but no specifics of the problem being solved.
  * The advantages and disadvantages of a specific {@code Solver} depend on its implementation.
  *
+ * @param <S> the type {@code SearchNode}s required by this solver
+ * @param <E> the type of the problem environment required by this solver
  * @author Dieter De Paepe
  */
-public interface Solver {
+public interface Solver<S extends SearchNode, E> {
     /**
      * Starts a <a href="http://en.wikipedia.org/wiki/State_space_search">state space search</a> for the problem
      * described by the provided parameters.
@@ -25,7 +27,7 @@ public interface Solver {
      * @param <T> the type of search nodes related to the problem being solved
      * @param <U> the type of the environment related to the problem being solved
      */
-    public <T extends SearchNode, U> void solve(InformedSearchNode<T> startNode,
+    public <T extends S, U extends E> void solve(InformedSearchNode<T> startNode,
                                                  U environment,
                                                  Heuristic<? super T, ? super U> heuristic,
                                                  SearchNodeGenerator<T, U> searchNodeGenerator,

@@ -25,7 +25,7 @@ import com.github.dieterdepaepe.jsearch.search.statespace.util.BasicSolution;
  * This implementation is stateless and therefor thread-safe.
  * @author Dieter De Paepe
  */
-public class AStarSolver implements Solver {
+public class AStarSolver implements Solver<SearchNode, Object> {
 
     @Override
     public <T extends SearchNode, U> void solve(InformedSearchNode<T> startNode,

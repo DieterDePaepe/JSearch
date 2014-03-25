@@ -30,7 +30,7 @@ import java.util.*;
  * This implementation is stateless and therefor thread-safe.
  * @author Dieter De Paepe
  */
-public class RBFSSolver implements Solver {
+public class RBFSSolver implements Solver<SearchNode, Object> {
     /*
     Implementation note:
     This class is an iterative version of the recursive algorithm described in Artificial Intelligence: A modern

@@ -25,7 +25,7 @@ import java.util.List;
  * This implementation is stateless and therefor thread-safe.
  * @author Dieter De Paepe
  */
-public class DepthFirstSolver implements Solver {
+public class DepthFirstSolver implements Solver<SearchNode, Object> {
     @Override
     public <T extends SearchNode, U> void solve(InformedSearchNode<T> startNode,
                                                 U environment,

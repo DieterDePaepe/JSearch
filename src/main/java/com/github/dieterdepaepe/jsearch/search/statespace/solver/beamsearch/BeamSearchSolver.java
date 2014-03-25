@@ -21,15 +21,15 @@ import java.util.*;
  * This implementation is thread-safe if the used {@code ParentSelector} is.
  * @author Dieter De Paepe
  */
-public class BeamSearchSolver implements Solver {
-    private ParentSelector parentSelector;
+public class BeamSearchSolver<S extends SearchNode, E> implements Solver<S, E> {
+    private ParentSelector<S, E> parentSelector;
 
-    public BeamSearchSolver(ParentSelector parentSelector) {
+    public BeamSearchSolver(ParentSelector<S, E> parentSelector) {
         this.parentSelector = parentSelector;
     }
 
     @Override
-    public <T extends SearchNode, U> void solve(InformedSearchNode<T> startNode,
+    public <T extends S, U extends E> void solve(InformedSearchNode<T> startNode,
                                                 U environment,
                                                 Heuristic<? super T, ? super U> heuristic,
                                                 SearchNodeGenerator<T, U> searchNodeGenerator,
@@ -63,7 +63,7 @@ public class BeamSearchSolver implements Solver {
             if (!manager.continueSearch())
                 return;
 
-            GenerationSelection<T> selection = parentSelector.selectNodesToExpand(nonGoalChildren);
+            GenerationSelection<T> selection = parentSelector.selectNodesToExpand(nonGoalChildren, environment);
             if (selection.getBestPrunedNode() != null)
                 bestDiscardedNodeCost = Math.min(bestDiscardedNodeCost, selection.getBestPrunedNode().getEstimatedTotalCost());
 
@@ -98,14 +98,17 @@ public class BeamSearchSolver implements Solver {
     /**
      * A selection criteria used in beam search to decide which search nodes of each generation are used to form
      * the next generation.
+     * @param <S> the type of search nodes required by this selector
+     * @param <E> the type of the environment required by this selector
      */
-    public interface ParentSelector {
+    public interface ParentSelector<S extends SearchNode, E> {
         /**
          * Selects the parent nodes for the next generation of search nodes.
          * @param nodesToChooseFrom the current generation of nodes
-         * @param <T> the type of the search nodes
+         * @param environment the environment corresponding to the passed search nodes
+         * @param <T> the type of the search nodes being passed
          * @return information about the selected nodes
          */
-        public <T extends SearchNode> GenerationSelection<T> selectNodesToExpand(Collection<InformedSearchNode<T>> nodesToChooseFrom);
+        public <T extends S> GenerationSelection<T> selectNodesToExpand(Collection<InformedSearchNode<T>> nodesToChooseFrom, E environment);
     }
 }

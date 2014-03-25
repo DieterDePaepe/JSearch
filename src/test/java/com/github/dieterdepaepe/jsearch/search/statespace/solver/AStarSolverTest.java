@@ -39,7 +39,7 @@ public class AStarSolverTest {
             for (Move move : moves)
                 startFieldState = puzzle.move(startFieldState, move);
 
-            Solver solver = new AStarSolver();
+            AStarSolver solver = new AStarSolver();
             BasicManager<PuzzleSearchNode> manager = new BasicManager<>();
 
             assertTrue(puzzle.canReach(startFieldState, targetFieldState));

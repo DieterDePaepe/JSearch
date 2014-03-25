@@ -33,7 +33,7 @@ import static com.google.common.base.Preconditions.checkArgument;
  * This implementation is stateless and therefor thread-safe.
  * @author Dieter De Paepe
  */
-public class SMAStarSolver implements Solver {
+public class SMAStarSolver implements Solver<SearchNode, Object> {
     private int maxSearchNodesUsed;
 
     /**

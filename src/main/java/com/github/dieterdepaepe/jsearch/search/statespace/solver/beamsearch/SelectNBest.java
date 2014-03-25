@@ -17,7 +17,7 @@ import static com.google.common.base.Preconditions.*;
  * This class is thread-safe.
  * @author Dieter De Paepe
  */
-public class SelectNBest implements BeamSearchSolver.ParentSelector {
+public class SelectNBest implements BeamSearchSolver.ParentSelector<SearchNode, Object> {
     private int n;
 
     /**
@@ -33,7 +33,7 @@ public class SelectNBest implements BeamSearchSolver.ParentSelector {
     }
 
     @Override
-    public <T extends SearchNode> GenerationSelection<T> selectNodesToExpand(Collection<InformedSearchNode<T>> nodesToChooseFrom) {
+    public <T extends SearchNode> GenerationSelection<T> selectNodesToExpand(Collection<InformedSearchNode<T>> nodesToChooseFrom, Object environment) {
         List<InformedSearchNode<T>> cheapestNodes = Ordering.natural().leastOf(nodesToChooseFrom, n + 1);
         if (cheapestNodes.size() <= n)
             return new GenerationSelection<>(cheapestNodes, null);
