@@ -62,7 +62,7 @@ public class DepthFirstSolverTest {
 
         solver.solve(new InformedSearchNode<>(a, 0), null, heuristic, generator, manager);
 
-        assertEquals(generator.getExpandedNodes(), Arrays.asList(a, c, e, g, d, b));
+        assertEquals(generator.getExpandedNodes(), Arrays.asList(a, c, e, g, i, d, f, b, h));
 
         List<Solution<? extends DummySearchNode>> foundSolutions = manager.solutions;
         List<DummySearchNode> expectedSolutionNodes =  Arrays.asList(i, f, h, f);
