@@ -40,19 +40,19 @@ public class RBFSSolver implements Solver<SearchNode, Object> {
      */
 
     @Override
-    public <T extends SearchNode, U> void solve(InformedSearchNode<T> startNode,
-                                                U environment,
-                                                Heuristic<? super T, ? super U> heuristic,
-                                                SearchNodeGenerator<T, U> generator,
-                                                Manager<? super T> manager) {
-        Deque<SearchTreeLevel<T>> levelStack = new ArrayDeque<>();
+    public <S extends SearchNode, E> void solve(InformedSearchNode<S> startNode,
+                                                E environment,
+                                                Heuristic<? super S, ? super E> heuristic,
+                                                SearchNodeGenerator<S, E> searchNodeGenerator,
+                                                Manager<? super S> manager) {
+        Deque<SearchTreeLevel<S>> levelStack = new ArrayDeque<>();
         levelStack.addFirst(new SearchTreeLevel<>(manager.getCostBound(), Arrays.asList(new RBFSSearchNode<>(startNode.getSearchNode(), startNode.getEstimatedTotalCost()))));
 
         while (manager.continueSearch()) {
-            SearchTreeLevel<T> currentLevel = levelStack.peekFirst();
-            List<RBFSSearchNode<T>> searchNodes = currentLevel.nodes;
+            SearchTreeLevel<S> currentLevel = levelStack.peekFirst();
+            List<RBFSSearchNode<S>> searchNodes = currentLevel.nodes;
             Collections.sort(searchNodes);
-            RBFSSearchNode<T> bestCostNode = searchNodes.get(0);
+            RBFSSearchNode<S> bestCostNode = searchNodes.get(0);
 
             currentLevel.cutoffCost = Math.min(currentLevel.cutoffCost, manager.getCostBound());
             if (bestCostNode.minimumSolutionCost > currentLevel.cutoffCost) {
@@ -72,14 +72,14 @@ public class RBFSSolver implements Solver<SearchNode, Object> {
                 return;
             }
 
-            Iterable<InformedSearchNode<T>> successors = generator.generateSuccessorNodes(bestCostNode.searchNode, environment, heuristic);
+            Iterable<InformedSearchNode<S>> successors = searchNodeGenerator.generateSuccessorNodes(bestCostNode.searchNode, environment, heuristic);
             if (Iterables.isEmpty(successors)) {
                 bestCostNode.minimumSolutionCost = Double.POSITIVE_INFINITY;
                 continue;
             }
 
-            List<RBFSSearchNode<T>> rbfsSuccessors = new ArrayList<>();
-            for (InformedSearchNode<T> successor : successors) {
+            List<RBFSSearchNode<S>> rbfsSuccessors = new ArrayList<>();
+            for (InformedSearchNode<S> successor : successors) {
                 // By taking the minimum solution cost of the parent node into account, we can prevent unneeded backtracking
                 // caused by using the minimum solution cost as the cutoff cost for a next iteration.
                 rbfsSuccessors.add(new RBFSSearchNode<>(successor.getSearchNode(), Math.max(successor.getEstimatedTotalCost(), bestCostNode.minimumSolutionCost)));

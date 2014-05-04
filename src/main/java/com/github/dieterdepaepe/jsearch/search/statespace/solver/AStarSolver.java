@@ -28,30 +28,29 @@ import com.github.dieterdepaepe.jsearch.search.statespace.util.BasicSolution;
 public class AStarSolver implements Solver<SearchNode, Object> {
 
     @Override
-    public <T extends SearchNode, U> void solve(InformedSearchNode<T> startNode,
-                                                U environment,
-                                                Heuristic<? super T, ? super U> heuristic,
-                                                SearchNodeGenerator<T, U> searchNodeGenerator,
-                                                Manager<? super T> manager) {
-
-        FibonacciHeap<InformedSearchNode<T>> heap = new FibonacciHeap<>();
+    public <S extends SearchNode, E> void solve(InformedSearchNode<S> startNode,
+                                                E environment,
+                                                Heuristic<? super S, ? super E> heuristic,
+                                                SearchNodeGenerator<S, E> searchNodeGenerator,
+                                                Manager<? super S> manager) {
+        FibonacciHeap<InformedSearchNode<S>> heap = new FibonacciHeap<>();
         heap.insert(startNode, startNode.getEstimatedTotalCost());
 
         while (!heap.isEmpty() && manager.continueSearch()) {
-            InformedSearchNode<T> informedNodeToExpand = heap.deleteMinimum().getValue();
+            InformedSearchNode<S> informedNodeToExpand = heap.deleteMinimum().getValue();
             double costBound = manager.getCostBound();
 
             // The cost bound might have been lowered since this state was added to the queue, we need to check it again.
             if (informedNodeToExpand.getEstimatedTotalCost() > costBound)
                 return;
 
-            T nodeToExpand = informedNodeToExpand.getSearchNode();
+            S nodeToExpand = informedNodeToExpand.getSearchNode();
             if (nodeToExpand.isGoal()) {
                 manager.registerSolution(new BasicSolution<>(nodeToExpand, true));
                 return;
             }
 
-            for (InformedSearchNode<T> successor : searchNodeGenerator.generateSuccessorNodes(nodeToExpand, environment, heuristic)) {
+            for (InformedSearchNode<S> successor : searchNodeGenerator.generateSuccessorNodes(nodeToExpand, environment, heuristic)) {
                 // Since A* can be very memory expensive, we do a premature purging of search nodes.
                 if (successor.getEstimatedTotalCost() <= costBound)
                     heap.insert(successor, successor.getEstimatedTotalCost());

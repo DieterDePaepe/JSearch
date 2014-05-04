@@ -33,8 +33,8 @@ public class SelectNBest implements BeamSearchSolver.ParentSelector<SearchNode, 
     }
 
     @Override
-    public <T extends SearchNode> GenerationSelection<T> selectNodesToExpand(Collection<InformedSearchNode<T>> nodesToChooseFrom, Object environment) {
-        List<InformedSearchNode<T>> cheapestNodes = Ordering.natural().leastOf(nodesToChooseFrom, n + 1);
+    public <S extends SearchNode> GenerationSelection<S> selectNodesToExpand(Collection<InformedSearchNode<S>> nodesToChooseFrom, Object environment) {
+        List<InformedSearchNode<S>> cheapestNodes = Ordering.natural().leastOf(nodesToChooseFrom, n + 1);
         if (cheapestNodes.size() <= n)
             return new GenerationSelection<>(cheapestNodes, null);
         else

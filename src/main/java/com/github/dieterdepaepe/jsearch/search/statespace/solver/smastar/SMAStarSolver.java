@@ -48,22 +48,22 @@ public class SMAStarSolver implements Solver<SearchNode, Object> {
     }
 
     @Override
-    public <T extends SearchNode, U> void solve(InformedSearchNode<T> startNode,
-                                                U environment,
-                                                Heuristic<? super T, ? super U> heuristic,
-                                                SearchNodeGenerator<T, U> searchNodeGenerator,
-                                                Manager<? super T> manager) {
-        SMAStarFrontier<T> frontier = new SMAStarFrontier<>();
+    public <S extends SearchNode, E> void solve(InformedSearchNode<S> startNode,
+                                                E environment,
+                                                Heuristic<? super S, ? super E> heuristic,
+                                                SearchNodeGenerator<S, E> searchNodeGenerator,
+                                                Manager<? super S> manager) {
+        SMAStarFrontier<S> frontier = new SMAStarFrontier<>();
         BoundaryNodeCostTracker boundaryNodeCostTracker = new BoundaryNodeCostTracker();
 
-        SMASearchNode<T> smaStartNode = new SMASearchNode<>(startNode.getSearchNode(), null, 0, startNode.getEstimatedTotalCost());
+        SMASearchNode<S> smaStartNode = new SMASearchNode<>(startNode.getSearchNode(), null, 0, startNode.getEstimatedTotalCost());
         frontier.addNode(smaStartNode);
 
         // The total number of SMASearchNodes in memory: this includes all nodes on the frontier and their ancestors
         int nodesInMemory = 1;
 
         while (manager.continueSearch()) {
-            SMASearchNode<T> cheapestNode = frontier.getDeepestLeastCostNode();
+            SMASearchNode<S> cheapestNode = frontier.getDeepestLeastCostNode();
 
             if (cheapestNode.getTotalEstimatedCost() > manager.getCostBound())
                 return;
@@ -84,7 +84,7 @@ public class SMAStarSolver implements Solver<SearchNode, Object> {
             }
 
             if (hasChildren) {
-                SMASearchNode<T> newChild = generateChild(cheapestNode, frontier, boundaryNodeCostTracker);
+                SMASearchNode<S> newChild = generateChild(cheapestNode, frontier, boundaryNodeCostTracker);
                 if (!cheapestNode.shouldBeOnFrontier())
                     frontier.removeNode(cheapestNode);
                 if (newChild != null) {

@@ -27,14 +27,14 @@ import java.util.List;
  */
 public class DepthFirstSolver implements Solver<SearchNode, Object> {
     @Override
-    public <T extends SearchNode, U> void solve(InformedSearchNode<T> startNode,
-                                                U environment,
-                                                Heuristic<? super T, ? super U> heuristic,
-                                                SearchNodeGenerator<T, U> searchNodeGenerator,
-                                                Manager<? super T> manager) {
-        Deque<InformedSearchNode<T>> nodesStack = new ArrayDeque<>();
+    public <S extends SearchNode, E> void solve(InformedSearchNode<S> startNode,
+                                                E environment,
+                                                Heuristic<? super S, ? super E> heuristic,
+                                                SearchNodeGenerator<S, E> searchNodeGenerator,
+                                                Manager<? super S> manager) {
+        Deque<InformedSearchNode<S>> nodesStack = new ArrayDeque<>();
 
-        T bestGoalNode = null;
+        S bestGoalNode = null;
         double bestGoalNodeCost = Double.POSITIVE_INFINITY;
 
         nodesStack.addFirst(startNode);
@@ -42,13 +42,13 @@ public class DepthFirstSolver implements Solver<SearchNode, Object> {
             if (!manager.continueSearch())
                 return;
 
-            InformedSearchNode<T> informedNodeToExpand = nodesStack.removeFirst();
+            InformedSearchNode<S> informedNodeToExpand = nodesStack.removeFirst();
 
             // Don't expand node if it surpasses the cost boundary
             if (informedNodeToExpand.getEstimatedTotalCost() > manager.getCostBound())
                 continue;
 
-            T searchNode = informedNodeToExpand.getSearchNode();
+            S searchNode = informedNodeToExpand.getSearchNode();
             if (searchNode.isGoal()) {
                 if (searchNode.getCost() < bestGoalNodeCost || bestGoalNode == null) {
                     bestGoalNode = searchNode;
@@ -58,7 +58,7 @@ public class DepthFirstSolver implements Solver<SearchNode, Object> {
             } else {
                 // Add generated successor nodes in reverse order to the stack, so they will be evaluated according
                 // to the order defined by the generator.
-                List<InformedSearchNode<T>> successors = Lists.newArrayList(searchNodeGenerator.generateSuccessorNodes(searchNode, environment, heuristic));
+                List<InformedSearchNode<S>> successors = Lists.newArrayList(searchNodeGenerator.generateSuccessorNodes(searchNode, environment, heuristic));
                 for (int i = successors.size() - 1; i >= 0; i--)
                     nodesStack.addFirst(successors.get(i));
             }

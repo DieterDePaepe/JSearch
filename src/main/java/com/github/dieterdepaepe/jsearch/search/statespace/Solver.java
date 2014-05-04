@@ -6,11 +6,11 @@ package com.github.dieterdepaepe.jsearch.search.statespace;
  * A {@code Solver} bundles all functionality on how to solve a problem, but no specifics of the problem being solved.
  * The advantages and disadvantages of a specific {@code Solver} depend on its implementation.
  *
- * @param <S> the type {@code SearchNode}s required by this solver
- * @param <E> the type of the problem environment required by this solver
+ * @param <U> the type {@code SearchNode}s required by this solver
+ * @param <V> the type of the problem environment required by this solver
  * @author Dieter De Paepe
  */
-public interface Solver<S extends SearchNode, E> {
+public interface Solver<U extends SearchNode, V> {
     /**
      * Starts a <a href="http://en.wikipedia.org/wiki/State_space_search">state space search</a> for the problem
      * described by the provided parameters.
@@ -24,12 +24,12 @@ public interface Solver<S extends SearchNode, E> {
      * @param heuristic an (admissible) heuristic that estimates the remaining cost for any {@code SearchNode}
      * @param searchNodeGenerator the generator of the search graph
      * @param manager the manager responsible for handling all found solutions
-     * @param <T> the type of search nodes related to the problem being solved
-     * @param <U> the type of the environment related to the problem being solved
+     * @param <S> the actual type of search nodes related to the problem being solved
+     * @param <E> the actual type of the environment related to the problem being solved
      */
-    public <T extends S, U extends E> void solve(InformedSearchNode<T> startNode,
-                                                 U environment,
-                                                 Heuristic<? super T, ? super U> heuristic,
-                                                 SearchNodeGenerator<T, U> searchNodeGenerator,
-                                                 Manager<? super T> manager);
+    public <S extends U, E extends V> void solve(InformedSearchNode<S> startNode,
+                                                 E environment,
+                                                 Heuristic<? super S, ? super E> heuristic,
+                                                 SearchNodeGenerator<S, E> searchNodeGenerator,
+                                                 Manager<? super S> manager);
 }
