@@ -4,6 +4,9 @@ import com.github.dieterdepaepe.jsearch.problem.dummy.DummyGenerator;
 import com.github.dieterdepaepe.jsearch.problem.dummy.DummyHeuristic;
 import com.github.dieterdepaepe.jsearch.problem.dummy.DummySearchNode;
 import com.github.dieterdepaepe.jsearch.search.statespace.InformedSearchNode;
+import com.github.dieterdepaepe.jsearch.search.statespace.SearchNode;
+import com.github.dieterdepaepe.jsearch.search.statespace.Solution;
+import com.github.dieterdepaepe.jsearch.search.statespace.Solver;
 import com.github.dieterdepaepe.jsearch.search.statespace.dev.LoggingGenerator;
 import com.github.dieterdepaepe.jsearch.search.statespace.util.BasicManager;
 import com.google.common.collect.ArrayListMultimap;
@@ -11,15 +14,15 @@ import com.google.common.collect.ListMultimap;
 import org.testng.annotations.Test;
 
 import java.util.Arrays;
+import java.util.Collections;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.*;
 
 /**
  * Testing class for {@link com.github.dieterdepaepe.jsearch.search.statespace.solver.RBFSSolver}.
  * @author Dieter De Paepe
  */
-public class RBFSSolverTest {
+public class RBFSSolverTest extends BasicSolverTest {
     @Test
     public void testNodeExpansionOrder() {
         // Search space for this test, nodes are ordered from cheap to expensive, goals nodes are written in capitals.
@@ -58,7 +61,7 @@ public class RBFSSolverTest {
         BasicManager<DummySearchNode> manager = new BasicManager<>();
         RBFSSolver solver = new RBFSSolver();
 
-        solver.solve(new InformedSearchNode<>(a, 0), null, heuristic, generator, manager);
+        solver.solve(Collections.singleton(new InformedSearchNode<>(a, 0)), null, heuristic, generator, manager);
 
         assertEquals(generator.getExpandedNodes(), Arrays.asList(a, b, c, d, c, e, d));
         assertEquals(manager.getSolution().getNode(), f);
@@ -66,9 +69,33 @@ public class RBFSSolverTest {
     }
 
     @Test
-    public void testSolvesNPuzzle() {
+    public void testRespectsCutoffCost() {
+        DummySearchNode startState = new DummySearchNode("a", 1.0, 0, false);
+        DummySearchNode child1 = new DummySearchNode("b", 2.0, 0, false);
+        DummySearchNode child2 = new DummySearchNode("c", 4.0, 0, true);
 
+        ListMultimap<DummySearchNode, DummySearchNode> stateChildren = ArrayListMultimap.create();
+        stateChildren.put(startState, child1);
+        stateChildren.put(child1,child2);
 
-        //assertEquals(manager.getSolution().getNode().getMovesPerformed(), 80);
+        RBFSSolver solver = new RBFSSolver();
+        DummyGenerator generator = new DummyGenerator(stateChildren);
+        DummyHeuristic heuristic = new DummyHeuristic();
+        BasicManager<DummySearchNode> manager = new BasicManager<>(3.0);
+
+        solver.solve(
+                Collections.singleton(new InformedSearchNode<>(startState, startState.getHeuristicValue())),
+                null,
+                heuristic,
+                generator,
+                manager);
+
+        Solution<? extends DummySearchNode> solution = manager.getSolution();
+        assertNull(solution);
+    }
+
+    @Override
+    public Solver<SearchNode, Object> getBasicTestSolver() {
+        return new RBFSSolver();
     }
 }

@@ -2,7 +2,9 @@ package com.github.dieterdepaepe.jsearch.search.statespace.solver.beamsearch;
 
 import com.github.dieterdepaepe.jsearch.search.statespace.*;
 import com.github.dieterdepaepe.jsearch.search.statespace.util.BasicSolution;
+import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 
 import java.util.*;
 
@@ -15,8 +17,8 @@ import java.util.*;
  * to generate the search nodes for the next iteration. All generated nodes are examined to see if they are a goal
  * node or not. The search will continue until the search space is exhausted or until instructed by the {@link Manager}.
  * <p/>
- * This solver uses the {@link SearchNode#getSearchSpaceState()} information to filter out equivalent search nodes in
- * each iteration.
+ * The solver can use the {@link SearchNode#getSearchSpaceState()} information depending on the {@code ParentSelector}
+ * chosen.
  * <p/>
  * This implementation is thread-safe if the used {@code ParentSelector} is.
  * @author Dieter De Paepe
@@ -29,7 +31,7 @@ public class BeamSearchSolver<U extends SearchNode, V> implements Solver<U, V> {
     }
 
     @Override
-    public <S extends U, E extends V> void solve(InformedSearchNode<S> startNode,
+    public <S extends U, E extends V> void solve(Iterable<InformedSearchNode<S>> startNodes,
                                                  E environment,
                                                  Heuristic<? super S, ? super E> heuristic,
                                                  SearchNodeGenerator<S, E> searchNodeGenerator,
@@ -40,14 +42,11 @@ public class BeamSearchSolver<U extends SearchNode, V> implements Solver<U, V> {
         // Best solution found so far
         S bestSolution = null;
 
-        Collection<InformedSearchNode<S>> children = Collections.singleton(startNode);
+        Iterable<InformedSearchNode<S>> children = startNodes;
 
-        while (!children.isEmpty()) {
+        while (!Iterables.isEmpty(children)) {
             double costBound = manager.getCostBound();
 
-            children = filterDuplicates(children);
-
-            List<InformedSearchNode<S>> nonGoalChildren = new ArrayList<>(children.size());
             for (InformedSearchNode<S> child : children) {
                 if (child.getEstimatedTotalCost() > costBound)
                     continue;
@@ -55,44 +54,28 @@ public class BeamSearchSolver<U extends SearchNode, V> implements Solver<U, V> {
                     manager.registerSolution(new BasicSolution<>(child.getSearchNode(), false));
                     if (bestSolution == null || bestSolution.getCost() > child.getSearchNode().getCost())
                         bestSolution = child.getSearchNode();
-                } else {
-                    nonGoalChildren.add(child);
                 }
             }
 
             if (!manager.continueSearch())
                 return;
 
-            GenerationSelection<S> selection = parentSelector.selectNodesToExpand(nonGoalChildren, environment);
+            children = Iterables.filter(children, new IsCheaperThan(manager.getCostBound()));
+            GenerationSelection<S> selection = parentSelector.selectNodesToExpand(children, environment);
             if (selection.getBestPrunedNode() != null)
                 bestDiscardedNodeCost = Math.min(bestDiscardedNodeCost, selection.getBestPrunedNode().getEstimatedTotalCost());
 
-            children = new ArrayList<>();
+            List<Iterable<InformedSearchNode<S>>> childIterables = Lists.newArrayList();
             for (InformedSearchNode<S> parent : selection.getSelectedNodes())
-                Iterables.addAll(children, searchNodeGenerator.generateSuccessorNodes(parent.getSearchNode(), environment, heuristic));
+                childIterables.add(searchNodeGenerator.generateSuccessorNodes(parent.getSearchNode(), environment, heuristic));
+            children = Iterables.concat(childIterables);
+
         }
 
         // The search space has been exhausted. We can compare the best solution encountered against the best estimate
         // of a purged search node to decide whether or not we know for sure to have an optimal solution.
         if (bestSolution != null && bestSolution.getCost() <= bestDiscardedNodeCost)
             manager.registerSolution(new BasicSolution<>(bestSolution, true));
-    }
-
-    /**
-     * Makes a collection containing search nodes that each have a unique state space state.
-     * @param nodes the nodes
-     * @param <T> the type of search node
-     * @return a collection containing all unique search nodes
-     */
-    private <T extends SearchNode> Collection<InformedSearchNode<T>> filterDuplicates (Collection<InformedSearchNode<T>> nodes) {
-        Map<Object, InformedSearchNode<T>> stateToNode = new HashMap<>();
-        for (InformedSearchNode<T> node : nodes) {
-            InformedSearchNode<T> sameStateNode = stateToNode.get(node.getSearchNode().getSearchSpaceState());
-            if (sameStateNode == null || sameStateNode.getEstimatedTotalCost() > node.getEstimatedTotalCost())
-                stateToNode.put(node.getSearchNode().getSearchSpaceState(), node);
-        }
-
-        return stateToNode.values();
     }
 
     /**
@@ -108,6 +91,22 @@ public class BeamSearchSolver<U extends SearchNode, V> implements Solver<U, V> {
          * @param <S> the actual type of the search nodes
          * @return information about the selected nodes
          */
-        public <S extends U> GenerationSelection<S> selectNodesToExpand(Collection<InformedSearchNode<S>> nodesToChooseFrom, V environment);
+        public <S extends U> GenerationSelection<S> selectNodesToExpand(Iterable<InformedSearchNode<S>> nodesToChooseFrom, V environment);
+    }
+
+    /**
+     * A predicate that checks whether an {@code InformedSearchNode} is strictly cheaper than a specified cost.
+     */
+    private static class IsCheaperThan implements Predicate<InformedSearchNode<?>> {
+        private double maxAllowedCost;
+
+        private IsCheaperThan(double maxAllowedCost) {
+            this.maxAllowedCost = maxAllowedCost;
+        }
+
+        @Override
+        public boolean apply(InformedSearchNode<?> input) {
+            return input.getEstimatedTotalCost() < maxAllowedCost;
+        }
     }
 }

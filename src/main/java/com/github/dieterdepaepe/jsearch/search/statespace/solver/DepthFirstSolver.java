@@ -2,7 +2,6 @@ package com.github.dieterdepaepe.jsearch.search.statespace.solver;
 
 import com.github.dieterdepaepe.jsearch.search.statespace.*;
 import com.github.dieterdepaepe.jsearch.search.statespace.util.BasicSolution;
-import com.google.common.collect.Iterators;
 
 import java.util.*;
 
@@ -25,7 +24,7 @@ import java.util.*;
  */
 public class DepthFirstSolver implements Solver<SearchNode, Object> {
     @Override
-    public <S extends SearchNode, E> void solve(InformedSearchNode<S> startNode,
+    public <S extends SearchNode, E> void solve(Iterable<InformedSearchNode<S>> startNodes,
                                                 E environment,
                                                 Heuristic<? super S, ? super E> heuristic,
                                                 SearchNodeGenerator<S, E> searchNodeGenerator,
@@ -35,7 +34,7 @@ public class DepthFirstSolver implements Solver<SearchNode, Object> {
         S bestGoalNode = null;
         double bestGoalNodeCost = Double.POSITIVE_INFINITY;
 
-        nodesStack.addFirst(Iterators.singletonIterator(startNode));
+        nodesStack.addFirst(startNodes.iterator());
 
         while (!nodesStack.isEmpty()) {
             if (!manager.continueSearch())

@@ -2,6 +2,7 @@ package com.github.dieterdepaepe.jsearch.search.statespace.solver;
 
 import com.github.dieterdepaepe.jsearch.search.statespace.*;
 import com.github.dieterdepaepe.jsearch.search.statespace.util.BasicSolution;
+import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.Iterables;
 
 import java.util.*;
@@ -40,13 +41,23 @@ public class RBFSSolver implements Solver<SearchNode, Object> {
      */
 
     @Override
-    public <S extends SearchNode, E> void solve(InformedSearchNode<S> startNode,
+    public <S extends SearchNode, E> void solve(Iterable<InformedSearchNode<S>> startNodes,
                                                 E environment,
                                                 Heuristic<? super S, ? super E> heuristic,
                                                 SearchNodeGenerator<S, E> searchNodeGenerator,
                                                 Manager<? super S> manager) {
         Deque<SearchTreeLevel<S>> levelStack = new ArrayDeque<>();
-        levelStack.addFirst(new SearchTreeLevel<>(manager.getCostBound(), Arrays.asList(new RBFSSearchNode<>(startNode.getSearchNode(), startNode.getEstimatedTotalCost()))));
+
+        List<RBFSSearchNode<S>> startingSearchNodes = new ArrayList<>();
+        double costBound = manager.getCostBound();
+        for (InformedSearchNode<S> startNode : startNodes) {
+            if (startNode.getEstimatedTotalCost() <= costBound)
+                startingSearchNodes.add(new RBFSSearchNode<>(startNode.getSearchNode(), startNode.getEstimatedTotalCost()));
+        }
+        if (startingSearchNodes.isEmpty())
+            return;
+
+        levelStack.addFirst(new SearchTreeLevel<>(manager.getCostBound(), startingSearchNodes));
 
         while (manager.continueSearch()) {
             SearchTreeLevel<S> currentLevel = levelStack.peekFirst();
@@ -55,11 +66,12 @@ public class RBFSSolver implements Solver<SearchNode, Object> {
             RBFSSearchNode<S> bestCostNode = searchNodes.get(0);
 
             currentLevel.cutoffCost = Math.min(currentLevel.cutoffCost, manager.getCostBound());
-            if (bestCostNode.minimumSolutionCost > currentLevel.cutoffCost) {
+            if (bestCostNode.minimumSolutionCost > currentLevel.cutoffCost || !bestCostNode.mayLeadToSolution) {
                 if (levelStack.size() > 1) {
                     // Move up the search tree to look somewhere else, updating the minimum cost of the parent node
                     levelStack.removeFirst();
                     levelStack.peekFirst().nodes.get(0).minimumSolutionCost = bestCostNode.minimumSolutionCost;
+                    levelStack.peekFirst().nodes.get(0).mayLeadToSolution = bestCostNode.mayLeadToSolution;
                     continue;
                 } else {
                     // No solution can be found
@@ -75,6 +87,7 @@ public class RBFSSolver implements Solver<SearchNode, Object> {
             Iterable<InformedSearchNode<S>> successors = searchNodeGenerator.generateSuccessorNodes(bestCostNode.searchNode, environment, heuristic);
             if (Iterables.isEmpty(successors)) {
                 bestCostNode.minimumSolutionCost = Double.POSITIVE_INFINITY;
+                bestCostNode.mayLeadToSolution = false;
                 continue;
             }
 
@@ -108,22 +121,27 @@ public class RBFSSolver implements Solver<SearchNode, Object> {
     }
 
     /**
-     * A wrapper around a search node that can hold an adjustable lower bound for a solution that has the search
+     * A wrapper around a search node that can hold an adjustable lower bound for a possible solution which has the search
      * node as ancestor.
      * @param <T> the type of the search node wrapped
      */
     private static class RBFSSearchNode<T extends SearchNode> implements Comparable<RBFSSearchNode<T>> {
         private T searchNode;
         private double minimumSolutionCost;
+        private boolean mayLeadToSolution;
 
         private RBFSSearchNode(T searchNode, double minimumSolutionCost) {
             this.searchNode = searchNode;
             this.minimumSolutionCost = minimumSolutionCost;
+            this.mayLeadToSolution = true;
         }
 
         @Override
         public int compareTo(RBFSSearchNode<T> o) {
-            return Double.compare(minimumSolutionCost, o.minimumSolutionCost);
+            return ComparisonChain.start().
+                    compareTrueFirst(mayLeadToSolution, o.mayLeadToSolution).
+                    compare(minimumSolutionCost, o.minimumSolutionCost).
+                    result();
         }
     }
 }

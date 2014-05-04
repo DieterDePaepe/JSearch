@@ -14,6 +14,15 @@ import com.github.dieterdepaepe.jsearch.search.statespace.Solution;
  */
 public class BasicManager<T extends SearchNode> implements Manager<T> {
     private Solution<? extends T> bestSolutionSoFar;
+    private double costBound;
+
+    public BasicManager(double costBound) {
+        this.costBound = costBound;
+    }
+
+    public BasicManager() {
+        this(Double.POSITIVE_INFINITY);
+    }
 
     public Solution<? extends T> getSolution() {
         return bestSolutionSoFar;
@@ -26,15 +35,14 @@ public class BasicManager<T extends SearchNode> implements Manager<T> {
 
     @Override
     public void registerSolution(Solution<? extends T> solution) {
-        if (bestSolutionSoFar == null || solution.isOptimal() || bestSolutionSoFar.getNode().getCost() > solution.getNode().getCost())
+        if (bestSolutionSoFar == null || solution.isOptimal() || solution.getNode().getCost() < costBound) {
             bestSolutionSoFar = solution;
+            costBound = solution.getNode().getCost();
+        }
     }
 
     @Override
     public double getCostBound() {
-        if (bestSolutionSoFar == null)
-            return Double.POSITIVE_INFINITY;
-        else
-            return bestSolutionSoFar.getNode().getCost();
+        return costBound;
     }
 }

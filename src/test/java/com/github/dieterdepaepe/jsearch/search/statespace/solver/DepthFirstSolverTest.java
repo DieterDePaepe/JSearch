@@ -3,9 +3,7 @@ package com.github.dieterdepaepe.jsearch.search.statespace.solver;
 import com.github.dieterdepaepe.jsearch.problem.dummy.DummyGenerator;
 import com.github.dieterdepaepe.jsearch.problem.dummy.DummyHeuristic;
 import com.github.dieterdepaepe.jsearch.problem.dummy.DummySearchNode;
-import com.github.dieterdepaepe.jsearch.search.statespace.InformedSearchNode;
-import com.github.dieterdepaepe.jsearch.search.statespace.Manager;
-import com.github.dieterdepaepe.jsearch.search.statespace.Solution;
+import com.github.dieterdepaepe.jsearch.search.statespace.*;
 import com.github.dieterdepaepe.jsearch.search.statespace.dev.LoggingGenerator;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
@@ -13,6 +11,7 @@ import org.testng.annotations.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.testng.Assert.assertEquals;
@@ -21,7 +20,7 @@ import static org.testng.Assert.assertEquals;
  * Testing class for {@link com.github.dieterdepaepe.jsearch.search.statespace.solver.DepthFirstSolver}.
  * @author Dieter De Paepe
  */
-public class DepthFirstSolverTest {
+public class DepthFirstSolverTest extends BasicSolverTest {
     @Test
     public void testNodeExpansionOrder() {
         // Search space for this test, nodes are ordered from cheap to expensive, goals nodes are written in capitals.
@@ -60,7 +59,7 @@ public class DepthFirstSolverTest {
         MyManager manager = new MyManager();
         DepthFirstSolver solver = new DepthFirstSolver();
 
-        solver.solve(new InformedSearchNode<>(a, 0), null, heuristic, generator, manager);
+        solver.solve(Collections.singleton(new InformedSearchNode<>(a, 0)), null, heuristic, generator, manager);
 
         assertEquals(generator.getExpandedNodes(), Arrays.asList(a, c, e, g, i, d, f, b, h));
 
@@ -72,6 +71,11 @@ public class DepthFirstSolverTest {
             assertEquals(foundSolution.getNode(), expectedSolutionNodes.get(index), "Unexpected search node for index " + index);
             assertEquals(foundSolution.isOptimal(), index == expectedSolutionNodes.size() - 1, "Incorrect optimality flag for index " + index);
         }
+    }
+
+    @Override
+    public Solver<SearchNode, Object> getBasicTestSolver() {
+        return new DepthFirstSolver();
     }
 
     private static class MyManager implements Manager<DummySearchNode> {

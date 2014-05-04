@@ -4,7 +4,6 @@ import com.github.dieterdepaepe.jsearch.search.statespace.InformedSearchNode;
 import com.github.dieterdepaepe.jsearch.search.statespace.SearchNode;
 import com.google.common.collect.Ordering;
 
-import java.util.Collection;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.*;
@@ -14,8 +13,12 @@ import static com.google.common.base.Preconditions.*;
  * for each iteration of beam search. This method is sometimes referred to as <i>local beam search</i>,
  * <i>fixed width beam search</i> or, if {@code n == 1}, <i>greedy local search</i>.
  * <p/>
+ * This selector will ignore the {@link com.github.dieterdepaepe.jsearch.search.statespace.SearchNode#getSearchSpaceState()}
+ * information.
+ * <p/>
  * This class is thread-safe.
  * @author Dieter De Paepe
+ * @see com.github.dieterdepaepe.jsearch.search.statespace.solver.beamsearch.SelectUniqueNBest
  */
 public class SelectNBest implements BeamSearchSolver.ParentSelector<SearchNode, Object> {
     private int n;
@@ -33,7 +36,7 @@ public class SelectNBest implements BeamSearchSolver.ParentSelector<SearchNode, 
     }
 
     @Override
-    public <S extends SearchNode> GenerationSelection<S> selectNodesToExpand(Collection<InformedSearchNode<S>> nodesToChooseFrom, Object environment) {
+    public <S extends SearchNode> GenerationSelection<S> selectNodesToExpand(Iterable<InformedSearchNode<S>> nodesToChooseFrom, Object environment) {
         List<InformedSearchNode<S>> cheapestNodes = Ordering.natural().leastOf(nodesToChooseFrom, n + 1);
         if (cheapestNodes.size() <= n)
             return new GenerationSelection<>(cheapestNodes, null);

@@ -1,19 +1,20 @@
-package com.github.dieterdepaepe.jsearch.search.statespace.solver;
+package com.github.dieterdepaepe.jsearch.search.statespace.solver.beamsearch;
 
 import com.github.dieterdepaepe.jsearch.problem.dummy.DummyGenerator;
 import com.github.dieterdepaepe.jsearch.problem.dummy.DummyHeuristic;
 import com.github.dieterdepaepe.jsearch.problem.dummy.DummySearchNode;
 import com.github.dieterdepaepe.jsearch.search.statespace.InformedSearchNode;
 import com.github.dieterdepaepe.jsearch.search.statespace.SearchNode;
+import com.github.dieterdepaepe.jsearch.search.statespace.Solver;
 import com.github.dieterdepaepe.jsearch.search.statespace.dev.LoggingGenerator;
-import com.github.dieterdepaepe.jsearch.search.statespace.solver.beamsearch.BeamSearchSolver;
-import com.github.dieterdepaepe.jsearch.search.statespace.solver.beamsearch.SelectNBest;
+import com.github.dieterdepaepe.jsearch.search.statespace.solver.BasicSolverTest;
 import com.github.dieterdepaepe.jsearch.search.statespace.util.BasicManager;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import org.testng.annotations.Test;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 
 import static org.testng.Assert.assertEquals;
@@ -23,7 +24,7 @@ import static org.testng.Assert.assertTrue;
  * Test class for {@link com.github.dieterdepaepe.jsearch.search.statespace.solver.beamsearch.BeamSearchSolver}.
  * @author Dieter De Paepe
  */
-public class BeamSearchSolverTest {
+public class BeamSearchSolverTest extends BasicSolverTest {
     @Test
     public void testNodeExpansionOrderForN1() {
         // Search space for this test, nodes are ordered from cheap to expensive, goals nodes are written in capitals.
@@ -62,7 +63,7 @@ public class BeamSearchSolverTest {
         BasicManager<DummySearchNode> manager = new BasicManager<>();
         BeamSearchSolver<SearchNode, Object> solver = new BeamSearchSolver<>(new SelectNBest(1));
 
-        solver.solve(new InformedSearchNode<>(a, 0), null, heuristic, generator, manager);
+        solver.solve(Collections.singleton(new InformedSearchNode<>(a, 0)), null, heuristic, generator, manager);
 
         assertEquals(generator.getExpandedNodes(), Arrays.asList(a, b));
         assertEquals(manager.getSolution().getNode(), h);
@@ -107,7 +108,7 @@ public class BeamSearchSolverTest {
         BasicManager<DummySearchNode> manager = new BasicManager<>();
         BeamSearchSolver<SearchNode, Object> solver = new BeamSearchSolver<>(new SelectNBest(2));
 
-        solver.solve(new InformedSearchNode<>(a, 0), null, heuristic, generator, manager);
+        solver.solve(Collections.singleton(new InformedSearchNode<>(a, 0)), null, heuristic, generator, manager);
 
         assertEquals(new HashSet<>(generator.getExpandedNodes()), new HashSet<>(Arrays.asList(a, b, c, e, g)));
         assertEquals(manager.getSolution().getNode(), h);
@@ -152,10 +153,15 @@ public class BeamSearchSolverTest {
         BasicManager<DummySearchNode> manager = new BasicManager<>();
         BeamSearchSolver<SearchNode, Object> solver = new BeamSearchSolver<>(new SelectNBest(3));
 
-        solver.solve(new InformedSearchNode<>(a, 0), null, heuristic, generator, manager);
+        solver.solve(Collections.singleton(new InformedSearchNode<>(a, 0)), null, heuristic, generator, manager);
 
-        assertEquals(new HashSet<>(generator.getExpandedNodes()), new HashSet<>(Arrays.asList(a, b, c, d, e, g)));
+        assertEquals(new HashSet<>(generator.getExpandedNodes()), new HashSet<>(Arrays.asList(a, b, c, d, e)));
         assertEquals(manager.getSolution().getNode(), f);
         assertTrue(manager.getSolution().isOptimal());
+    }
+
+    @Override
+    public Solver<SearchNode, Object> getBasicTestSolver() {
+        return new BeamSearchSolver<>(new SelectNBest(100));
     }
 }

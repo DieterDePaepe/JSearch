@@ -4,13 +4,17 @@ import com.github.dieterdepaepe.jsearch.problem.dummy.DummyGenerator;
 import com.github.dieterdepaepe.jsearch.problem.dummy.DummyHeuristic;
 import com.github.dieterdepaepe.jsearch.problem.dummy.DummySearchNode;
 import com.github.dieterdepaepe.jsearch.search.statespace.InformedSearchNode;
+import com.github.dieterdepaepe.jsearch.search.statespace.SearchNode;
+import com.github.dieterdepaepe.jsearch.search.statespace.Solver;
 import com.github.dieterdepaepe.jsearch.search.statespace.dev.LoggingGenerator;
+import com.github.dieterdepaepe.jsearch.search.statespace.solver.BasicSolverTest;
 import com.github.dieterdepaepe.jsearch.search.statespace.util.BasicManager;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import org.testng.annotations.Test;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 import static org.testng.Assert.*;
 
@@ -18,7 +22,7 @@ import static org.testng.Assert.*;
  * Test class for {@link com.github.dieterdepaepe.jsearch.search.statespace.solver.smastar.SMAStarSolver}.
  * @author Dieter De Paepe
  */
-public class SMAStarSolverTest {
+public class SMAStarSolverTest extends BasicSolverTest {
 
     @Test
     public void testNodeExpansionOrder() {
@@ -58,7 +62,7 @@ public class SMAStarSolverTest {
         BasicManager<DummySearchNode> manager = new BasicManager<>();
         SMAStarSolver solver = new SMAStarSolver(4);
 
-        solver.solve(new InformedSearchNode<>(a, 0), null, heuristic, generator, manager);
+        solver.solve(Collections.singleton(new InformedSearchNode<>(a, 0)), null, heuristic, generator, manager);
 
         assertEquals(manager.getSolution().getNode(), f);
         assertTrue(manager.getSolution().isOptimal());
@@ -103,7 +107,7 @@ public class SMAStarSolverTest {
         BasicManager<DummySearchNode> manager = new BasicManager<>();
         SMAStarSolver solver = new SMAStarSolver(4);
 
-        solver.solve(new InformedSearchNode<>(a, 0), null, heuristic, generator, manager);
+        solver.solve(Collections.singleton(new InformedSearchNode<>(a, 0)), null, heuristic, generator, manager);
 
         assertEquals(manager.getSolution().getNode(), f);
         assertTrue(manager.getSolution().isOptimal());
@@ -149,7 +153,7 @@ public class SMAStarSolverTest {
         BasicManager<DummySearchNode> manager = new BasicManager<>();
         SMAStarSolver solver = new SMAStarSolver(3); //Insufficient memory to find the true optimal solution (E)
 
-        solver.solve(new InformedSearchNode<>(a, 0), null, heuristic, generator, manager);
+        solver.solve(Collections.singleton(new InformedSearchNode<>(a, 0)), null, heuristic, generator, manager);
 
         assertEquals(manager.getSolution().getNode(), f);
         assertFalse(manager.getSolution().isOptimal());
@@ -183,9 +187,14 @@ public class SMAStarSolverTest {
         BasicManager<DummySearchNode> manager = new BasicManager<>();
         SMAStarSolver solver = new SMAStarSolver(2); //Insufficient memory to find any solution
 
-        solver.solve(new InformedSearchNode<>(a, 0), null, heuristic, generator, manager);
+        solver.solve(Collections.singleton(new InformedSearchNode<>(a, 0)), null, heuristic, generator, manager);
 
         assertNull(manager.getSolution());
         assertEquals(generator.getExpandedNodes(), Arrays.asList(a));
+    }
+
+    @Override
+    public Solver<SearchNode, Object> getBasicTestSolver() {
+        return new SMAStarSolver(100);
     }
 }

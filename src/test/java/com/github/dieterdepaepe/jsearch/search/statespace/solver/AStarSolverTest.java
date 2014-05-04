@@ -16,12 +16,13 @@ import org.testng.annotations.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
  * Testing class for {@link com.github.dieterdepaepe.jsearch.search.statespace.solver.AStarSolver}.
  */
-public class AStarSolverTest {
+public class AStarSolverTest extends BasicSolverTest {
     @Test
     public void testSolvesNPuzzle() {
         List<Move> moves1 = Arrays.asList();
@@ -44,7 +45,7 @@ public class AStarSolverTest {
 
             assertTrue(puzzle.canReach(startFieldState, targetFieldState));
             solver.solve(
-                    nodeGenerator.createStartState(startFieldState, environment, heuristic),
+                    Collections.singleton(nodeGenerator.createStartState(startFieldState, environment, heuristic)),
                     environment,
                     heuristic,
                     nodeGenerator,
@@ -105,10 +106,15 @@ public class AStarSolverTest {
         BasicManager<DummySearchNode> manager = new BasicManager<>();
         AStarSolver solver = new AStarSolver();
 
-        solver.solve(new InformedSearchNode<>(a, 0), null, heuristic, generator, manager);
+        solver.solve(Collections.singleton(new InformedSearchNode<>(a, 0)), null, heuristic, generator, manager);
 
         assertEquals(generator.getExpandedNodes(), Arrays.asList(a, b, c, d, e));
         assertEquals(manager.getSolution().getNode(), f);
         assertTrue(manager.getSolution().isOptimal());
+    }
+
+    @Override
+    public Solver<SearchNode, Object> getBasicTestSolver() {
+        return new AStarSolver();
     }
 }

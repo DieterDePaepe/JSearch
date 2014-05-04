@@ -30,7 +30,7 @@ import static com.google.common.base.Preconditions.checkArgument;
  * {@code SearchNodeGenerator}. Because of this, memory can be saved by having the {@code SearchNodeGenerator}
  * return generating {@code Iterable}s rather than collections.
  * <p/>
- * This implementation is stateless and therefor thread-safe.
+ * This implementation is thread-safe.
  * @author Dieter De Paepe
  */
 public class SMAStarSolver implements Solver<SearchNode, Object> {
@@ -48,7 +48,7 @@ public class SMAStarSolver implements Solver<SearchNode, Object> {
     }
 
     @Override
-    public <S extends SearchNode, E> void solve(InformedSearchNode<S> startNode,
+    public <S extends SearchNode, E> void solve(Iterable<InformedSearchNode<S>> startNodes,
                                                 E environment,
                                                 Heuristic<? super S, ? super E> heuristic,
                                                 SearchNodeGenerator<S, E> searchNodeGenerator,
@@ -56,11 +56,16 @@ public class SMAStarSolver implements Solver<SearchNode, Object> {
         SMAStarFrontier<S> frontier = new SMAStarFrontier<>();
         BoundaryNodeCostTracker boundaryNodeCostTracker = new BoundaryNodeCostTracker();
 
-        SMASearchNode<S> smaStartNode = new SMASearchNode<>(startNode.getSearchNode(), null, 0, startNode.getEstimatedTotalCost());
-        frontier.addNode(smaStartNode);
+        SMASearchNode<S> smaRootNode = new SMASearchNode<>(null, null, 0, Double.NEGATIVE_INFINITY);
+        smaRootNode.initialiseChildren(startNodes);
+        if (!smaRootNode.getCurrentChildIterator().hasNext())
+            return;
+        frontier.addNode(smaRootNode);
 
-        // The total number of SMASearchNodes in memory: this includes all nodes on the frontier and their ancestors
-        int nodesInMemory = 1;
+        // The total number of SMASearchNodes containing a search node in memory:
+        // this includes all nodes on the frontier, their ancestors (which may or may not be on the frontier) but
+        // excludes the root node.
+        int nodesInMemory = 0;
 
         while (manager.continueSearch()) {
             SMASearchNode<S> cheapestNode = frontier.getDeepestLeastCostNode();
@@ -71,7 +76,7 @@ public class SMAStarSolver implements Solver<SearchNode, Object> {
             if (cheapestNode.getTotalEstimatedCost() == Double.POSITIVE_INFINITY)
                 return;
 
-            if (cheapestNode.getSearchNode().isGoal()) {
+            if (cheapestNode.getSearchNode() != null && cheapestNode.getSearchNode().isGoal()) {
                 boolean isOptimal = cheapestNode.getTotalEstimatedCost() <= boundaryNodeCostTracker.getMinimumBoundaryCost();
                 manager.registerSolution(new BasicSolution<>(cheapestNode.getSearchNode(), isOptimal));
                 return;
@@ -194,7 +199,7 @@ public class SMAStarSolver implements Solver<SearchNode, Object> {
     private <T extends SearchNode> SMASearchNode<T> makeSMASearchNode(InformedSearchNode<T> node, SMASearchNode<T> parent, BoundaryNodeCostTracker boundaryNodeCostTracker) {
         int childDepth = parent.getDepth() + 1;
         double childCost;
-        if (childDepth >= maxSearchNodesUsed - 1 && !node.getSearchNode().isGoal()) {
+        if (childDepth >= maxSearchNodesUsed && !node.getSearchNode().isGoal()) {
             childCost = Double.POSITIVE_INFINITY;
             boundaryNodeCostTracker.update(node.getEstimatedTotalCost());
         } else {

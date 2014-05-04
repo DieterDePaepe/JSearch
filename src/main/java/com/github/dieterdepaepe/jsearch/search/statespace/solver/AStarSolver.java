@@ -28,17 +28,21 @@ import com.github.dieterdepaepe.jsearch.search.statespace.util.BasicSolution;
 public class AStarSolver implements Solver<SearchNode, Object> {
 
     @Override
-    public <S extends SearchNode, E> void solve(InformedSearchNode<S> startNode,
+    public <S extends SearchNode, E> void solve(Iterable<InformedSearchNode<S>> startNodes,
                                                 E environment,
                                                 Heuristic<? super S, ? super E> heuristic,
                                                 SearchNodeGenerator<S, E> searchNodeGenerator,
                                                 Manager<? super S> manager) {
         FibonacciHeap<InformedSearchNode<S>> heap = new FibonacciHeap<>();
-        heap.insert(startNode, startNode.getEstimatedTotalCost());
+        double costBound = manager.getCostBound();
+
+        for (InformedSearchNode<S> startNode : startNodes)
+            if (startNode.getEstimatedTotalCost() <= costBound)
+                heap.insert(startNode, startNode.getEstimatedTotalCost());
 
         while (!heap.isEmpty() && manager.continueSearch()) {
             InformedSearchNode<S> informedNodeToExpand = heap.deleteMinimum().getValue();
-            double costBound = manager.getCostBound();
+            costBound = manager.getCostBound();
 
             // The cost bound might have been lowered since this state was added to the queue, we need to check it again.
             if (informedNodeToExpand.getEstimatedTotalCost() > costBound)
