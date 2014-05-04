@@ -19,7 +19,7 @@ public class DummySearchNode implements SearchNode{
      * @param cost the cost for this node
      * @param heuristicValue the estimated remaining cost for this node
      * @param isGoal whether or not this node indicates a solution
-     * @param searchStateIdentifier the search state identifier to be used, if null, this object will be used as identifier
+     * @param searchStateIdentifier the search state identifier to be used, if null, this object itself will be used as identifier
      */
     public DummySearchNode(String name, double cost, double heuristicValue, boolean isGoal, Object searchStateIdentifier) {
         this.name = name;
