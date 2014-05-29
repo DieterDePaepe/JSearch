@@ -11,7 +11,6 @@ import org.testng.annotations.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import static org.testng.Assert.assertEquals;
@@ -59,7 +58,7 @@ public class DepthFirstSolverTest extends BasicSolverTest {
         MyManager manager = new MyManager();
         DepthFirstSolver solver = new DepthFirstSolver();
 
-        solver.solve(Collections.singleton(new InformedSearchNode<>(a, 0)), null, heuristic, generator, manager);
+        Solvers.solve(solver, manager, generator, heuristic, null, a);
 
         assertEquals(generator.getExpandedNodes(), Arrays.asList(a, c, e, g, i, d, f, b, h));
 

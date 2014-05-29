@@ -3,10 +3,7 @@ package com.github.dieterdepaepe.jsearch.search.statespace.solver;
 import com.github.dieterdepaepe.jsearch.problem.dummy.DummyGenerator;
 import com.github.dieterdepaepe.jsearch.problem.dummy.DummyHeuristic;
 import com.github.dieterdepaepe.jsearch.problem.dummy.DummySearchNode;
-import com.github.dieterdepaepe.jsearch.search.statespace.InformedSearchNode;
-import com.github.dieterdepaepe.jsearch.search.statespace.SearchNode;
-import com.github.dieterdepaepe.jsearch.search.statespace.Solution;
-import com.github.dieterdepaepe.jsearch.search.statespace.Solver;
+import com.github.dieterdepaepe.jsearch.search.statespace.*;
 import com.github.dieterdepaepe.jsearch.search.statespace.dev.LoggingGenerator;
 import com.github.dieterdepaepe.jsearch.search.statespace.util.BasicManager;
 import com.google.common.collect.ArrayListMultimap;
@@ -14,7 +11,6 @@ import com.google.common.collect.ListMultimap;
 import org.testng.annotations.Test;
 
 import java.util.Arrays;
-import java.util.Collections;
 
 import static org.testng.Assert.*;
 
@@ -61,7 +57,7 @@ public class RBFSSolverTest extends BasicSolverTest {
         BasicManager<DummySearchNode> manager = new BasicManager<>();
         RBFSSolver solver = new RBFSSolver();
 
-        solver.solve(Collections.singleton(new InformedSearchNode<>(a, 0)), null, heuristic, generator, manager);
+        Solvers.solve(solver, manager, generator, heuristic, null, a);
 
         assertEquals(generator.getExpandedNodes(), Arrays.asList(a, b, c, d, c, e, d));
         assertEquals(manager.getSolution().getNode(), f);
@@ -83,12 +79,7 @@ public class RBFSSolverTest extends BasicSolverTest {
         DummyHeuristic heuristic = new DummyHeuristic();
         BasicManager<DummySearchNode> manager = new BasicManager<>(3.0);
 
-        solver.solve(
-                Collections.singleton(new InformedSearchNode<>(startState, startState.getHeuristicValue())),
-                null,
-                heuristic,
-                generator,
-                manager);
+        Solvers.solve(solver, manager, generator, heuristic, null, startState);
 
         Solution<? extends DummySearchNode> solution = manager.getSolution();
         assertNull(solution);

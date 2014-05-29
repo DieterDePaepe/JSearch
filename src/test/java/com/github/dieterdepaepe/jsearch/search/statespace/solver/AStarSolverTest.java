@@ -16,7 +16,6 @@ import org.testng.annotations.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -44,13 +43,7 @@ public class AStarSolverTest extends BasicSolverTest {
             BasicManager<PuzzleSearchNode> manager = new BasicManager<>();
 
             assertTrue(puzzle.canReach(startFieldState, targetFieldState));
-            solver.solve(
-                    Collections.singleton(nodeGenerator.createStartState(startFieldState, environment, heuristic)),
-                    environment,
-                    heuristic,
-                    nodeGenerator,
-                    manager
-            );
+            Solvers.solve(solver, manager, nodeGenerator, heuristic, environment, nodeGenerator.createStartState(startFieldState, environment));
 
             Solution<? extends PuzzleSearchNode> solution = manager.getSolution();
 
@@ -106,7 +99,7 @@ public class AStarSolverTest extends BasicSolverTest {
         BasicManager<DummySearchNode> manager = new BasicManager<>();
         AStarSolver solver = new AStarSolver();
 
-        solver.solve(Collections.singleton(new InformedSearchNode<>(a, 0)), null, heuristic, generator, manager);
+        Solvers.solve(solver, manager, generator, heuristic, null, a);
 
         assertEquals(generator.getExpandedNodes(), Arrays.asList(a, b, c, d, e));
         assertEquals(manager.getSolution().getNode(), f);
