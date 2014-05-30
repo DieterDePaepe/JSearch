@@ -57,7 +57,7 @@ public class BeamSearchSolverTest extends BasicSolverTest {
         successors.put(d, f);
         successors.put(b, h);
 
-        LoggingGenerator<DummySearchNode, Object> generator = new LoggingGenerator<>(new DummyGenerator(successors));
+        LoggingGenerator<DummySearchNode, Object> generator = new LoggingGenerator<>(new DummyGenerator<>(successors));
         DummyHeuristic heuristic = new DummyHeuristic();
         BasicManager<DummySearchNode> manager = new BasicManager<>();
         BeamSearchSolver<SearchNode, Object> solver = new BeamSearchSolver<>(new SelectNBest(1));
@@ -102,7 +102,7 @@ public class BeamSearchSolverTest extends BasicSolverTest {
         successors.put(d, f);
         successors.put(b, h);
 
-        LoggingGenerator<DummySearchNode, Object> generator = new LoggingGenerator<>(new DummyGenerator(successors));
+        LoggingGenerator<DummySearchNode, Object> generator = new LoggingGenerator<>(new DummyGenerator<>(successors));
         DummyHeuristic heuristic = new DummyHeuristic();
         BasicManager<DummySearchNode> manager = new BasicManager<>();
         BeamSearchSolver<SearchNode, Object> solver = new BeamSearchSolver<>(new SelectNBest(2));
@@ -147,7 +147,7 @@ public class BeamSearchSolverTest extends BasicSolverTest {
         successors.put(d, f);
         successors.put(b, h);
 
-        LoggingGenerator<DummySearchNode, Object> generator = new LoggingGenerator<>(new DummyGenerator(successors));
+        LoggingGenerator<DummySearchNode, Object> generator = new LoggingGenerator<>(new DummyGenerator<>(successors));
         DummyHeuristic heuristic = new DummyHeuristic();
         BasicManager<DummySearchNode> manager = new BasicManager<>();
         BeamSearchSolver<SearchNode, Object> solver = new BeamSearchSolver<>(new SelectNBest(3));

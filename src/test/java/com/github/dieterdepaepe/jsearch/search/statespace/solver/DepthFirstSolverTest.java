@@ -53,7 +53,7 @@ public class DepthFirstSolverTest extends BasicSolverTest {
         successors.put(d, f);
         successors.put(b, h);
 
-        LoggingGenerator<DummySearchNode, Object> generator = new LoggingGenerator<>(new DummyGenerator(successors));
+        LoggingGenerator<DummySearchNode, Object> generator = new LoggingGenerator<>(new DummyGenerator<>(successors));
         DummyHeuristic heuristic = new DummyHeuristic();
         MyManager manager = new MyManager();
         DepthFirstSolver solver = new DepthFirstSolver();

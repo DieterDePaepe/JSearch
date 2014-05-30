@@ -26,7 +26,7 @@ public abstract class BasicSolverTest {
     public void testShouldReturnNothingIfNoStartStates() {
         Solver<SearchNode, Object> solver = getBasicTestSolver();
 
-        DummyGenerator generator = new DummyGenerator(ArrayListMultimap.<DummySearchNode, DummySearchNode>create());
+        DummyGenerator<DummySearchNode> generator = new DummyGenerator<>(ArrayListMultimap.<DummySearchNode, DummySearchNode>create());
         DummyHeuristic heuristic = new DummyHeuristic();
         BasicManager<DummySearchNode> manager = new BasicManager<>();
         Solvers.solve(solver, manager, generator, heuristic, null, Collections.<DummySearchNode>emptyList());
@@ -39,7 +39,7 @@ public abstract class BasicSolverTest {
         Solver<SearchNode, Object> solver = getBasicTestSolver();
 
         ListMultimap<DummySearchNode, DummySearchNode> stateChildren = ArrayListMultimap.create();
-        DummyGenerator generator = new DummyGenerator(stateChildren);
+        DummyGenerator<DummySearchNode> generator = new DummyGenerator<>(stateChildren);
         DummyHeuristic heuristic = new DummyHeuristic();
         BasicManager<DummySearchNode> manager = new BasicManager<>();
 
@@ -69,7 +69,7 @@ public abstract class BasicSolverTest {
     public void testShouldFindSolutionAmongStartStates() {
         Solver<SearchNode, Object> solver = getBasicTestSolver();
 
-        DummyGenerator generator = new DummyGenerator(ArrayListMultimap.<DummySearchNode, DummySearchNode>create());
+        DummyGenerator<DummySearchNode> generator = new DummyGenerator<>(ArrayListMultimap.<DummySearchNode, DummySearchNode>create());
         DummyHeuristic heuristic = new DummyHeuristic();
         BasicManager<DummySearchNode> manager = new BasicManager<>();
 
@@ -100,7 +100,7 @@ public abstract class BasicSolverTest {
         stateChildren.put(startState2, childState2);
 
         Solver<SearchNode, Object> solver = getBasicTestSolver();
-        DummyGenerator generator = new DummyGenerator(stateChildren);
+        DummyGenerator<DummySearchNode> generator = new DummyGenerator<>(stateChildren);
         DummyHeuristic heuristic = new DummyHeuristic();
         BasicManager<DummySearchNode> manager = new BasicManager<>();
 

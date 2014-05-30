@@ -52,7 +52,7 @@ public class RBFSSolverTest extends BasicSolverTest {
         successors.put(d, f);
         successors.put(b, h);
 
-        LoggingGenerator<DummySearchNode, Object> generator = new LoggingGenerator<>(new DummyGenerator(successors));
+        LoggingGenerator<DummySearchNode, Object> generator = new LoggingGenerator<>(new DummyGenerator<>(successors));
         DummyHeuristic heuristic = new DummyHeuristic();
         BasicManager<DummySearchNode> manager = new BasicManager<>();
         RBFSSolver solver = new RBFSSolver();
@@ -75,7 +75,7 @@ public class RBFSSolverTest extends BasicSolverTest {
         stateChildren.put(child1,child2);
 
         RBFSSolver solver = new RBFSSolver();
-        DummyGenerator generator = new DummyGenerator(stateChildren);
+        DummyGenerator<DummySearchNode> generator = new DummyGenerator<>(stateChildren);
         DummyHeuristic heuristic = new DummyHeuristic();
         BasicManager<DummySearchNode> manager = new BasicManager<>(3.0);
 

@@ -56,7 +56,7 @@ public class SMAStarSolverTest extends BasicSolverTest {
         successors.put(d, f);
         successors.put(b, h);
 
-        LoggingGenerator<DummySearchNode, Object> generator = new LoggingGenerator<>(new DummyGenerator(successors));
+        LoggingGenerator<DummySearchNode, Object> generator = new LoggingGenerator<>(new DummyGenerator<>(successors));
         DummyHeuristic heuristic = new DummyHeuristic();
         BasicManager<DummySearchNode> manager = new BasicManager<>();
         SMAStarSolver solver = new SMAStarSolver(4);
@@ -101,7 +101,7 @@ public class SMAStarSolverTest extends BasicSolverTest {
         successors.put(d, g);
         successors.put(e, h);
 
-        LoggingGenerator<DummySearchNode, Object> generator = new LoggingGenerator<>(new DummyGenerator(successors));
+        LoggingGenerator<DummySearchNode, Object> generator = new LoggingGenerator<>(new DummyGenerator<>(successors));
         DummyHeuristic heuristic = new DummyHeuristic();
         BasicManager<DummySearchNode> manager = new BasicManager<>();
         SMAStarSolver solver = new SMAStarSolver(4);
@@ -147,7 +147,7 @@ public class SMAStarSolverTest extends BasicSolverTest {
         successors.put(c, f);
         successors.put(d, e);
 
-        LoggingGenerator<DummySearchNode, Object> generator = new LoggingGenerator<>(new DummyGenerator(successors));
+        LoggingGenerator<DummySearchNode, Object> generator = new LoggingGenerator<>(new DummyGenerator<>(successors));
         DummyHeuristic heuristic = new DummyHeuristic();
         BasicManager<DummySearchNode> manager = new BasicManager<>();
         SMAStarSolver solver = new SMAStarSolver(3); //Insufficient memory to find the true optimal solution (E)
@@ -181,7 +181,7 @@ public class SMAStarSolverTest extends BasicSolverTest {
         successors.put(a, d);
         successors.put(b, e);
 
-        LoggingGenerator<DummySearchNode, Object> generator = new LoggingGenerator<>(new DummyGenerator(successors));
+        LoggingGenerator<DummySearchNode, Object> generator = new LoggingGenerator<>(new DummyGenerator<>(successors));
         DummyHeuristic heuristic = new DummyHeuristic();
         BasicManager<DummySearchNode> manager = new BasicManager<>();
         SMAStarSolver solver = new SMAStarSolver(2); //Insufficient memory to find any solution

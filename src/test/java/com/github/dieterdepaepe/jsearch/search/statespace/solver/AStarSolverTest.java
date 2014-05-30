@@ -94,7 +94,7 @@ public class AStarSolverTest extends BasicSolverTest {
         successors.put(d, f);
         successors.put(b, h);
 
-        LoggingGenerator<DummySearchNode, Object> generator = new LoggingGenerator<>(new DummyGenerator(successors));
+        LoggingGenerator<DummySearchNode, Object> generator = new LoggingGenerator<>(new DummyGenerator<>(successors));
         DummyHeuristic heuristic = new DummyHeuristic();
         BasicManager<DummySearchNode> manager = new BasicManager<>();
         AStarSolver solver = new AStarSolver();
