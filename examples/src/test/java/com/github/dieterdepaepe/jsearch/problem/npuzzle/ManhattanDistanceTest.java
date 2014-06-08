@@ -28,4 +28,18 @@ public class ManhattanDistanceTest {
 
         assertEquals(heuristic.estimateRemainingCost(node, environment), 14.0);
     }
+
+    @Test
+    public void testEstimateRemainingCost2() {
+        SlidingPuzzle puzzle = new SlidingPuzzle(3);
+        ManhattanDistance heuristic = new ManhattanDistance();
+
+        PuzzleFields targetFields = puzzle.createFields();
+        PuzzleFields testFields = puzzle.move(targetFields, Move.LEFT);
+
+        PuzzleEnvironment environment = new PuzzleEnvironment(puzzle, targetFields);
+        PuzzleSearchNode node = new PuzzleSearchNode(testFields, null, 0, false);
+
+        assertEquals(heuristic.estimateRemainingCost(node, environment), 1.0);
+    }
 }

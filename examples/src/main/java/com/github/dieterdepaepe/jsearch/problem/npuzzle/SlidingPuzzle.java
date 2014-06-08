@@ -187,4 +187,8 @@ public class SlidingPuzzle {
     public int getDimension() {
         return dimension;
     }
+
+    public int getEmptyFieldValue() {
+        return emptyFieldValue;
+    }
 }

@@ -18,6 +18,8 @@ public class ManhattanDistance implements Heuristic<PuzzleSearchNode, PuzzleEnvi
         for (int row = 0; row < puzzle.getDimension(); row++)
             for (int column = 0; column < puzzle.getDimension(); column++) {
                 int fieldValue = puzzle.getValue(currentState, row, column);
+                if (fieldValue == puzzle.getEmptyFieldValue())
+                    continue;
                 PuzzleIndex targetIndex = puzzle.findValue(targetState, fieldValue);
                 estimate += Math.abs(targetIndex.row - row) + Math.abs(targetIndex.column - column);
             }
