@@ -1,7 +1,7 @@
 JSearch
 =======
 
-JSearch is a java framework for solving [state space problems](http://en.wikipedia.org/wiki/State_space_search). It focusses on the following aspects:
+JSearch is a java framework for solving [state space problems](http://en.wikipedia.org/wiki/State_space_search). It focuses on the following aspects:
 
 1. Proper documentation
 2. Clean and tested code
@@ -26,13 +26,13 @@ You can use JSearch as a Maven dependency (coming soon):
 <dependency>
    <groupId>com.github.dieterdepaepe</groupId>
    <artifactId>jsearch-core</artifactId>
-   <version>1.0</version>
+   <version>0.1</version>
 </dependency>
 <!-- Contains examples, not needed for actual usage -->
 <dependency>
    <groupId>com.github.dieterdepaepe</groupId>
    <artifactId>jsearch-examples</artifactId>
-   <version>1.0</version>
+   <version>0.1</version>
 </dependency>
 ```
 
