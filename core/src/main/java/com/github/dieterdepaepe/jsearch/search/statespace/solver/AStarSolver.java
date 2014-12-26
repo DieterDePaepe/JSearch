@@ -33,12 +33,12 @@ public class AStarSolver implements Solver<SearchNode, Object> {
                                                 Heuristic<? super S, ? super E> heuristic,
                                                 SearchNodeGenerator<S, E> searchNodeGenerator,
                                                 Manager<? super S> manager) {
-        FibonacciHeap<InformedSearchNode<S>> heap = new FibonacciHeap<>();
+        FibonacciHeap<Double, InformedSearchNode<S>> heap = FibonacciHeap.create();
         double costBound = manager.getCostBound();
 
         for (InformedSearchNode<S> startNode : startNodes)
             if (startNode.getEstimatedTotalCost() <= costBound)
-                heap.insert(startNode, startNode.getEstimatedTotalCost());
+                heap.insert(startNode.getEstimatedTotalCost(), startNode);
 
         while (!heap.isEmpty() && manager.continueSearch()) {
             InformedSearchNode<S> informedNodeToExpand = heap.deleteMinimum().getValue();
@@ -57,7 +57,7 @@ public class AStarSolver implements Solver<SearchNode, Object> {
             for (InformedSearchNode<S> successor : searchNodeGenerator.generateSuccessorNodes(nodeToExpand, environment, heuristic)) {
                 // Since A* can be very memory expensive, we do a premature purging of search nodes.
                 if (successor.getEstimatedTotalCost() <= costBound)
-                    heap.insert(successor, successor.getEstimatedTotalCost());
+                    heap.insert(successor.getEstimatedTotalCost(), successor);
             }
         }
     }

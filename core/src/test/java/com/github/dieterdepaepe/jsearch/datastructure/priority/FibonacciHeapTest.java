@@ -18,11 +18,11 @@ import java.util.Random;
  */
 public class FibonacciHeapTest {
     private Random random;
-    private FibonacciHeap<Object> heap;
+    private FibonacciHeap<Integer, Object> heap;
 
     @BeforeMethod
     public void setupTest() {
-        heap = new FibonacciHeap<>();
+        heap = FibonacciHeap.create();
         random = new Random(0);
     }
 
@@ -31,22 +31,22 @@ public class FibonacciHeapTest {
         assertTrue(heap.isEmpty());
         assertEquals(heap.size(), 0);
 
-        FibonacciHeapEntry<Object> firstEntry = heap.insert(null, 1);
+        FibonacciHeapEntry<Integer, Object> firstEntry = heap.insert(1, null);
         assertFalse(heap.isEmpty());
         assertEquals(heap.size(), 1);
         assertEquals(heap.findMinimum(), firstEntry);
 
-        FibonacciHeapEntry<Object> secondEntry = heap.insert(null, 2);
+        FibonacciHeapEntry<Integer, Object> secondEntry = heap.insert(2, null);
         assertFalse(heap.isEmpty());
         assertEquals(heap.size(), 2);
         assertEquals(heap.findMinimum(), firstEntry);
 
-        FibonacciHeapEntry<Object> thirdEntry = heap.insert(null, 0);
+        FibonacciHeapEntry<Integer, Object> thirdEntry = heap.insert(0, null);
         assertFalse(heap.isEmpty());
         assertEquals(heap.findMinimum(), thirdEntry);
         assertEquals(heap.size(), 3);
 
-        FibonacciHeapEntry<Object> result1 = heap.deleteMinimum();
+        FibonacciHeapEntry<Integer, Object> result1 = heap.deleteMinimum();
         assertFalse(heap.isEmpty());
         assertEquals(heap.size(), 2);
         assertEquals(result1, thirdEntry);
@@ -62,7 +62,7 @@ public class FibonacciHeapTest {
         assertEquals(heap.size(), 1);
         assertEquals(heap.findMinimum(), secondEntry);
 
-        FibonacciHeapEntry<Object> result2 = heap.deleteMinimum();
+        FibonacciHeapEntry<Integer, Object> result2 = heap.deleteMinimum();
         assertTrue(heap.isEmpty());
         assertEquals(heap.size(), 0);
         assertEquals(result2, secondEntry);
@@ -115,7 +115,7 @@ public class FibonacciHeapTest {
         Collections.shuffle(values, random);
 
         @SuppressWarnings("unchecked")
-        FibonacciHeapEntry<Object>[] entries = new FibonacciHeapEntry[numberOfValues];
+        FibonacciHeapEntry<Integer, Object>[] entries = new FibonacciHeapEntry[numberOfValues];
         for (Integer value : values)
             entries[value] = heap.insert(value, value);
 
@@ -123,14 +123,14 @@ public class FibonacciHeapTest {
 
         // Query the heap to make it structure itself
         for (int i = 0; i < 999; i++) {
-            assertEquals(heap.findMinimum().getKey(), (double) i, "Heap entry contains incorrect key");
+            assertEquals(heap.findMinimum().getKey(), Integer.valueOf(i), "Heap entry contains incorrect key");
             assertEquals(heap.deleteMinimum().getValue(), i, "Heap returned incorrect element");
         }
 
         // Decrease the root
         assertEquals(heap.findMinimum(), entries[999]);
         heap.decreaseKey(heap.findMinimum(), 0);
-        assertEquals(heap.findMinimum().getKey(), 0.);
+        assertEquals(heap.findMinimum().getKey(), Integer.valueOf(0));
         assertEquals(heap.deleteMinimum().getValue(), 999);
 
         // Heap contains values [1000 .. numberOfValues[
@@ -145,7 +145,7 @@ public class FibonacciHeapTest {
         Collections.sort(values);
 
         for (Integer expectedValue : values) {
-            assertEquals(heap.deleteMinimum().getKey(), Double.valueOf(expectedValue));
+            assertEquals(heap.deleteMinimum().getKey(), expectedValue);
         }
 
         assertTrue(heap.isEmpty());
@@ -153,7 +153,7 @@ public class FibonacciHeapTest {
 
     @Test(expectedExceptions = IllegalArgumentException.class)
     public void testDecreaseKeyOnRemovedEntry() {
-        FibonacciHeapEntry<Object> entry = heap.insert(new Object(), 0);
+        FibonacciHeapEntry<Integer, Object> entry = heap.insert(0, new Object());
         heap.deleteMinimum();
         heap.decreaseKey(entry, -1);
     }
@@ -165,20 +165,20 @@ public class FibonacciHeapTest {
         List<Integer> values3 = generateNumbers(5000, -5000, 2);
 
         for (Integer value : values1)
-            heap.insert(null, value);
+            heap.insert(value, null);
 
-        FibonacciHeap<Object> heap2 = new FibonacciHeap<>();
+        FibonacciHeap<Integer, Object> heap2 = FibonacciHeap.create();
         for (Integer value : values2)
-            heap2.insert(null, value);
+            heap2.insert(value, null);
 
-        FibonacciHeap<Object> heap3 = new FibonacciHeap<>();
+        FibonacciHeap<Integer, Object> heap3 = FibonacciHeap.create();
         for (Integer value : values3)
-            heap3.insert(null, value);
+            heap3.insert(value, null);
 
         // Add and remove an extra element to heap2 and heap3 so they form proper trees
-        heap2.insert(null, Double.NEGATIVE_INFINITY);
+        heap2.insert(Integer.MIN_VALUE, null);
         heap2.deleteMinimum();
-        heap3.insert(null, Double.NEGATIVE_INFINITY);
+        heap3.insert(Integer.MIN_VALUE, null);
         heap3.deleteMinimum();
 
         heap.merge(heap2);
@@ -193,7 +193,7 @@ public class FibonacciHeapTest {
         Collections.sort(expectedValues);
 
         for (int i = 0; i < 5000; i++) {
-            assertEquals(heap.deleteMinimum().getKey(), Double.valueOf(expectedValues.get(i)));
+            assertEquals(heap.deleteMinimum().getKey(), expectedValues.get(i));
         }
 
         heap2.merge(heap3);
@@ -208,13 +208,13 @@ public class FibonacciHeapTest {
         Collections.sort(expectedValues);
 
         for (Integer expectedValue : expectedValues) {
-            assertEquals(heap.deleteMinimum().getKey(), Double.valueOf(expectedValue));
+            assertEquals(heap.deleteMinimum().getKey(), expectedValue);
         }
     }
 
     @Test
     public void testDelete() {
-        List<FibonacciHeapEntry<Object>> entries = new ArrayList<>();
+        List<FibonacciHeapEntry<Integer, Object>> entries = new ArrayList<>();
         for (Integer i : generateNumbers(100)) {
             entries.add(heap.insert(i, i));
         }
@@ -248,7 +248,7 @@ public class FibonacciHeapTest {
 
     @Test(expectedExceptions = IllegalArgumentException.class)
     public void testDeleteOnAlreadyRemovedElement() {
-        FibonacciHeapEntry<Object> entry = heap.insert(new Object(), 0);
+        FibonacciHeapEntry<Integer, Object> entry = heap.insert(0, new Object());
         heap.deleteMinimum();
         heap.delete(entry);
     }
@@ -256,14 +256,14 @@ public class FibonacciHeapTest {
     @Test
     public void testDeleteDuplicates() {
         for (int i = 0; i < 4; i++) {
-            heap = new FibonacciHeap<>();
-            List<FibonacciHeapEntry<Object>> entries = new ArrayList<>();
+            heap = FibonacciHeap.create();
+            List<FibonacciHeapEntry<Integer, Object>> entries = new ArrayList<>();
             for (int entry = 0; entry < 4; entry++) {
-                entries.add(heap.insert(null, Double.NEGATIVE_INFINITY));
+                entries.add(heap.insert(Integer.MIN_VALUE, null));
             }
 
-            FibonacciHeapEntry<Object> firstDeleted = heap.deleteMinimum();
-            FibonacciHeapEntry<Object> deletionVictim = entries.get(i);
+            FibonacciHeapEntry<Integer, Object> firstDeleted = heap.deleteMinimum();
+            FibonacciHeapEntry<Integer, Object> deletionVictim = entries.get(i);
             if (deletionVictim != firstDeleted)
                 heap.delete(deletionVictim);
             else
@@ -277,26 +277,20 @@ public class FibonacciHeapTest {
         }
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
-    public void testExceptionOnNanInsert() {
-        heap.insert(new Object(), Double.NaN);
-    }
-
-    @Test(expectedExceptions = IllegalArgumentException.class)
-    public void testExceptionOnNanDecreaseKey() {
-        FibonacciHeapEntry<Object> entry = heap.insert(new Object(), 0);
-        heap.decreaseKey(entry, Double.NaN);
-    }
+//    @Test(expectedExceptions = IllegalArgumentException.class)
+//    public void testExceptionOnNanInsert() {
+//        heap.insert(new Object(), Double.NaN);
+//    }
 
     @Test
     public void testIterator() {
         assertEquals(Iterators.size(heap.iterator()), 0);
 
-        FibonacciHeapEntry<Object> entry1 = heap.insert("Hello", 3);
-        FibonacciHeapEntry<Object> entry2 = heap.insert("World", 1);
-        FibonacciHeapEntry<Object> entry3 = heap.insert("how", 5);
-        FibonacciHeapEntry<Object> entry4 = heap.insert("are", 4);
-        FibonacciHeapEntry<Object> entry5 = heap.insert("you", 2);
+        FibonacciHeapEntry<Integer, Object> entry1 = heap.insert(3, "Hello");
+        FibonacciHeapEntry<Integer, Object> entry2 = heap.insert(1, "World");
+        FibonacciHeapEntry<Integer, Object> entry3 = heap.insert(5, "how");
+        FibonacciHeapEntry<Integer, Object> entry4 = heap.insert(4, "are");
+        FibonacciHeapEntry<Integer, Object> entry5 = heap.insert(2, "you");
 
         assertEquals(heap.asCollection().size(), 5);
         assertEquals(Sets.newHashSet(heap.iterator()), Sets.<FibonacciHeapEntry>newHashSet(entry1, entry2, entry3, entry4, entry5));
@@ -312,11 +306,11 @@ public class FibonacciHeapTest {
     public void testAsCollection() {
         assertTrue(heap.asCollection().isEmpty());
 
-        heap.insert("Hello", 3);
-        heap.insert("World", 1);
-        heap.insert("how", 5);
-        heap.insert("are", 4);
-        heap.insert("you", 2);
+        heap.insert(3, "Hello");
+        heap.insert(1, "World");
+        heap.insert(5, "how");
+        heap.insert(4, "are");
+        heap.insert(2, "you");
 
         assertEquals(heap.asCollection().size(), 5);
         assertEquals(Sets.newHashSet(heap.asCollection()), Sets.newHashSet("Hello", "World", "how", "are", "you"));

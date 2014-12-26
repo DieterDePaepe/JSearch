@@ -7,23 +7,23 @@ package com.github.dieterdepaepe.jsearch.datastructure.priority;
  *
  * @author Dieter De Paepe
  */
-public class FibonacciHeapEntry<T> {
-    T value;
-    double key;
-    FibonacciHeapEntry<T> parent;
-    FibonacciHeapEntry<T> nextSibling;
-    FibonacciHeapEntry<T> prevSibling;
-    FibonacciHeapEntry<T> child;
+public class FibonacciHeapEntry<K, V> {
+    V value;
+    K key;
+    FibonacciHeapEntry<K, V> parent;
+    FibonacciHeapEntry<K, V> nextSibling;
+    FibonacciHeapEntry<K, V> prevSibling;
+    FibonacciHeapEntry<K, V> child;
     /** The number of children of this entry */
     int degree;
     boolean marked;
 
     /**
      * Creates a new unmarked entry that contains no references.
-     * @param value the value to store in this entry
      * @param key the priority key
+     * @param value the value to store in this entry
      */
-    FibonacciHeapEntry(T value, double key) {
+    FibonacciHeapEntry(K key, V value) {
         this.value = value;
         this.key = key;
     }
@@ -40,7 +40,7 @@ public class FibonacciHeapEntry<T> {
      * Returns the value stored in this entry.
      * @return the stored value
      */
-    public T getValue() {
+    public V getValue() {
         return value;
     }
 
@@ -48,24 +48,24 @@ public class FibonacciHeapEntry<T> {
      * Replaces the value stored in this entry.
      * @param value the new value
      */
-    public void setValue(T value) {
+    public void setValue(V value) {
         this.value = value;
     }
 
     /**
      * Gets the key stored in this entry.
      * @return the key value
-     * @see FibonacciHeap#decreaseKey(FibonacciHeapEntry, double)
+     * @see FibonacciHeap#decreaseKey(FibonacciHeapEntry, Object)
      */
-    public double getKey() {
+    public K getKey() {
         return key;
     }
 
     @Override
     public String toString() {
         return "FibonacciHeapEntry{" +
-                value + ", " +
-                Double.toString(key) +
+                key + ", " +
+                value +
                 '}';
     }
 }

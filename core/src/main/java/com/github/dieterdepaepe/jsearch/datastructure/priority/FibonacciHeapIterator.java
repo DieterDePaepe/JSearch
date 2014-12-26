@@ -10,10 +10,10 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * An {@code Iterator} which iterates all entries in a {@code FibonacciHeap}.
  * @author Dieter De Paepe
  */
-class FibonacciHeapIterator<T> implements Iterator<FibonacciHeapEntry<T>> {
-    private final Deque<Iterator<FibonacciHeapEntry<T>>> stack;
+class FibonacciHeapIterator<K, V> implements Iterator<FibonacciHeapEntry<K, V>> {
+    private final Deque<Iterator<FibonacciHeapEntry<K, V>>> stack;
 
-    FibonacciHeapIterator(FibonacciHeapEntry<T> root) {
+    FibonacciHeapIterator(FibonacciHeapEntry<K, V> root) {
         this.stack = new ArrayDeque<>();
         stack.addLast(new SelfAndSiblings<>(checkNotNull(root)));
     }
@@ -24,9 +24,9 @@ class FibonacciHeapIterator<T> implements Iterator<FibonacciHeapEntry<T>> {
     }
 
     @Override
-    public FibonacciHeapEntry<T> next() {
-        Iterator<FibonacciHeapEntry<T>> itr = stack.getLast(); // throws NSEE if empty
-        FibonacciHeapEntry<T> result = itr.next();
+    public FibonacciHeapEntry<K, V> next() {
+        Iterator<FibonacciHeapEntry<K, V>> itr = stack.getLast(); // throws NSEE if empty
+        FibonacciHeapEntry<K, V> result = itr.next();
         if (!itr.hasNext())
             stack.removeLast();
         if (result.child != null)
@@ -39,12 +39,12 @@ class FibonacciHeapIterator<T> implements Iterator<FibonacciHeapEntry<T>> {
         throw new UnsupportedOperationException("Removal is not supported.");
     }
 
-    private static class SelfAndSiblings<T> implements Iterator<FibonacciHeapEntry<T>> {
-        private FibonacciHeapEntry<T> startEntry;
-        private FibonacciHeapEntry<T> nextEntry;
+    private static class SelfAndSiblings<K, V> implements Iterator<FibonacciHeapEntry<K, V>> {
+        private FibonacciHeapEntry<K, V> startEntry;
+        private FibonacciHeapEntry<K, V> nextEntry;
         private boolean hasStarted;
 
-        private SelfAndSiblings(FibonacciHeapEntry<T> startEntry) {
+        private SelfAndSiblings(FibonacciHeapEntry<K, V> startEntry) {
             this.startEntry = startEntry;
             this.nextEntry = startEntry;
             this.hasStarted = false;
@@ -56,8 +56,8 @@ class FibonacciHeapIterator<T> implements Iterator<FibonacciHeapEntry<T>> {
         }
 
         @Override
-        public FibonacciHeapEntry<T> next() {
-            FibonacciHeapEntry<T> result = nextEntry;
+        public FibonacciHeapEntry<K, V> next() {
+            FibonacciHeapEntry<K, V> result = nextEntry;
             hasStarted = true;
             nextEntry = nextEntry.nextSibling;
             return result;

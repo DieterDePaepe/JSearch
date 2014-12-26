@@ -1,10 +1,13 @@
 package com.github.dieterdepaepe.jsearch.datastructure.priority;
 
 import com.google.common.base.Function;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterators;
+import com.google.common.collect.Ordering;
 
 import java.util.AbstractCollection;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Iterator;
 
 /**
@@ -15,8 +18,7 @@ import java.util.Iterator;
  * is undefined.
  * <p>
  * This implementation allows for a total of {@code Integer.MAX_VALUE} entries to be stored in a single heap.
- * Any value except for {@code NaN} can be used as key in the heap. There are no limitations regarding the values
- * stored within the heap.
+ * There are no limitations regarding the values or keys that can be stored within the heap.
  * <p>
  * The Fibonacci heap provides the following worst case running times:
  * <ul>
@@ -25,7 +27,7 @@ import java.util.Iterator;
  *     <li>{@code O(n)}, but amortized {@code O(log n)}: removing the minimum entry, deleting any specified entry</li>
  * </ul>
  * <p>
- * Due to the weak binding of a  {@link FibonacciHeapEntry} and its corresponding heap (required for efficiency reasons),
+ * Due to the weak binding of a {@link FibonacciHeapEntry} and its corresponding heap (required for efficiency reasons),
  * all relevant methods are contained in this heap class and use entries as parameters.
  * This makes it possible for a user to provide foreign entries as method parameters, corrupting the data structure.
  * We define an <strong>ownership</strong> relation from heap to entry to document these issues. An entry is owned
@@ -38,20 +40,34 @@ import java.util.Iterator;
  * <p>
  * <strong>This implementation is not thread-safe.</strong>
  *
- * @param <T> the type of the values being stored in this heap
+ * @param <K> the type of the keys stored in this heap
+ * @param <V> the type of the values stored in this heap
  * @author Dieter De Paepe
  */
-public class FibonacciHeap<T> implements Iterable<FibonacciHeapEntry<T>> {
+public class FibonacciHeap<K, V> implements Iterable<FibonacciHeapEntry<K, V>> {
     private static final double PHI = 1.6180339887498948482;
     private static final int MAX_ENTRY_DEGREE_PLUS_ONE = (int) Math.floor(Math.log(Integer.MAX_VALUE) / Math.log(PHI)) + 1;
 
-    private FibonacciHeapEntry<T> minTreeRoot;
+    private Comparator<K> keyComparator;
+    private FibonacciHeapEntry<K, V> minTreeRoot;
     private int size;
 
     /**
-     * Creates a new, empty heap.
+     * Creates a new, empty heap that uses the specified comparator for its keys.
      */
-    public FibonacciHeap() {
+    public static <K, V> FibonacciHeap<K, V> create(Comparator<K> keyComparator) {
+        return new FibonacciHeap<>(keyComparator);
+    }
+
+    /**
+     * Creates a new, empty heap which uses the natural ordering of its keys.
+     */
+    public static <K extends Comparable, V> FibonacciHeap<K, V> create() {
+        return new FibonacciHeap<>(Ordering.<K>natural());
+    }
+
+    private FibonacciHeap(Comparator<K> keyComparator) {
+        this.keyComparator = Preconditions.checkNotNull(keyComparator);
         minTreeRoot = null;
         size = 0;
     }
@@ -60,16 +76,12 @@ public class FibonacciHeap<T> implements Iterable<FibonacciHeapEntry<T>> {
      * Inserts an element into this heap.
      * <p>
      * This operation has a running time of {@code O(1)}
-     * @param element the element to insert
      * @param key the priority key for this element (a lower value means higher priority)
+     * @param element the element to insert
      * @return the entry, owned by this heap, used to store the provided element
-     * @throws IllegalArgumentException if the specified key is NaN
      */
-    public FibonacciHeapEntry<T> insert(T element, double key) throws IllegalArgumentException {
-        if (Double.isNaN(key))
-            throw new IllegalArgumentException("Specified key is NaN.");
-
-        FibonacciHeapEntry<T> newTreeRoot = new FibonacciHeapEntry<>(element, key);
+    public FibonacciHeapEntry<K, V> insert(K key, V element) throws IllegalArgumentException {
+        FibonacciHeapEntry<K, V> newTreeRoot = new FibonacciHeapEntry<>(key, element);
 
         // The new element is inserted as a new single-element tree
         if (minTreeRoot == null) {
@@ -78,7 +90,7 @@ public class FibonacciHeap<T> implements Iterable<FibonacciHeapEntry<T>> {
             newTreeRoot.prevSibling = newTreeRoot;
         } else  {
             insertBehind(newTreeRoot, minTreeRoot);
-            if (newTreeRoot.key < minTreeRoot.key)
+            if (keyComparator.compare(newTreeRoot.key, minTreeRoot.key) <= -1)
                 minTreeRoot = newTreeRoot;
         }
 
@@ -94,24 +106,21 @@ public class FibonacciHeap<T> implements Iterable<FibonacciHeapEntry<T>> {
      * This operation has a worst case timing of {@code O(log n)}, but an amortized time of {@code O(1)}
      * @param entry the entry, owned by this heap, for which to reduce the priority key
      * @param newKey the new key value
-     * @throws IllegalArgumentException if the specified key is NaN or if it can be determined that the specified entry
+     * @throws IllegalArgumentException if it can be determined that the specified entry
      * is no longer part of any heap
      */
-    public void decreaseKey(FibonacciHeapEntry<T> entry, double newKey) throws IllegalArgumentException {
-        if (Double.isNaN(newKey))
-            throw new IllegalArgumentException("Specified key is NaN.");
-
+    public void decreaseKey(FibonacciHeapEntry<K, V> entry, K newKey) throws IllegalArgumentException {
         if (entry.hasBeenRemoved())
             throw new IllegalArgumentException("Attempting to decrease the key of an entry that is no longer present in a heap.");
 
-        if (newKey >= entry.key)
+        if (keyComparator.compare(newKey, entry.key) >= 0)
             return;
 
         entry.key = newKey;
 
         // If the new key value violates the heap property, promote the entry to the root list.
-        if (entry.parent != null && entry.key < entry.parent.key) {
-            FibonacciHeapEntry<T> entryToPromote = entry;
+        if (entry.parent != null && keyComparator.compare(entry.key, entry.parent.key) < 0) {
+            FibonacciHeapEntry<K, V> entryToPromote = entry;
             // If a marked parent loses another child, this parent is promoted himself.
             // We use a while construct here to avoid recursion in the promote method
             while (entryToPromote != null)
@@ -119,7 +128,7 @@ public class FibonacciHeap<T> implements Iterable<FibonacciHeapEntry<T>> {
         }
 
         // Check if the entry is now the minimum entry in the heap
-        if (entry.key < minTreeRoot.key)
+        if (keyComparator.compare(entry.key, minTreeRoot.key) < 0)
             minTreeRoot = entry;
     }
 
@@ -129,7 +138,7 @@ public class FibonacciHeap<T> implements Iterable<FibonacciHeapEntry<T>> {
      * @param child the child
      * @param parent the new parent for {@code child}
      */
-    private void makeChildOf(FibonacciHeapEntry<T> child, FibonacciHeapEntry<T> parent) {
+    private void makeChildOf(FibonacciHeapEntry<K, V> child, FibonacciHeapEntry<K, V> parent) {
         if (parent.child != null)
             insertBehind(child, parent.child);
         else {
@@ -148,7 +157,7 @@ public class FibonacciHeap<T> implements Iterable<FibonacciHeapEntry<T>> {
      * @param entryToInsert the entry to insert behind {@code entry}
      * @param entry an entry
      */
-    private void insertBehind(FibonacciHeapEntry<T> entryToInsert, FibonacciHeapEntry<T> entry) {
+    private void insertBehind(FibonacciHeapEntry<K, V> entryToInsert, FibonacciHeapEntry<K, V> entry) {
         entryToInsert.nextSibling = entry.nextSibling;
         entryToInsert.prevSibling = entry;
         entry.nextSibling.prevSibling = entryToInsert;
@@ -162,7 +171,7 @@ public class FibonacciHeap<T> implements Iterable<FibonacciHeapEntry<T>> {
      * (of the parent), the mark. If {@code entry} has no children, no action is taken.
      * @param entry the entry for which to splice the children into the sibling list
      */
-    private void moveChildrenToSiblings(FibonacciHeapEntry<T> entry) {
+    private void moveChildrenToSiblings(FibonacciHeapEntry<K, V> entry) {
         if (entry.child != null) {
             entry.child.prevSibling.nextSibling = entry.nextSibling;
             entry.nextSibling.prevSibling = entry.child.prevSibling;
@@ -181,8 +190,8 @@ public class FibonacciHeap<T> implements Iterable<FibonacciHeapEntry<T>> {
      * @param entry the entry to move to the root list
      * @return the parent of entry if it should also be promoted, null otherwise
      */
-    private FibonacciHeapEntry<T> promote(FibonacciHeapEntry<T> entry) {
-        FibonacciHeapEntry<T> parentEntry = entry.parent;
+    private FibonacciHeapEntry<K, V> promote(FibonacciHeapEntry<K, V> entry) {
+        FibonacciHeapEntry<K, V> parentEntry = entry.parent;
         parentEntry.degree--;
 
         // Adjust navigation references for parent and his children
@@ -214,7 +223,7 @@ public class FibonacciHeap<T> implements Iterable<FibonacciHeapEntry<T>> {
      * but refer to each other instead. The references of {@code entry} will remain unchanged.
      * @param entry the entry
      */
-    private void extract(FibonacciHeapEntry<T> entry) {
+    private void extract(FibonacciHeapEntry<K, V> entry) {
         entry.nextSibling.prevSibling = entry.prevSibling;
         entry.prevSibling.nextSibling = entry.nextSibling;
     }
@@ -222,7 +231,7 @@ public class FibonacciHeap<T> implements Iterable<FibonacciHeapEntry<T>> {
     /**
      * Removes {@code entry}'s references to its siblings and child .
      */
-    private void releaseSiblingsAndChild(FibonacciHeapEntry<T> entry) {
+    private void releaseSiblingsAndChild(FibonacciHeapEntry<K, V> entry) {
         entry.nextSibling = null;
         entry.prevSibling = null;
         entry.child = null;
@@ -235,11 +244,11 @@ public class FibonacciHeap<T> implements Iterable<FibonacciHeapEntry<T>> {
      * This operation has a worst case timing of {@code O(n)}, but an amortized time of {@code O(log n)}
      * @return the entry with the lowest key stored in this heap or null if this heap is empty
      */
-    public FibonacciHeapEntry<T> deleteMinimum() {
+    public FibonacciHeapEntry<K, V> deleteMinimum() {
         if (minTreeRoot == null)
             return null;
 
-        FibonacciHeapEntry<T> result = minTreeRoot;
+        FibonacciHeapEntry<K, V> result = minTreeRoot;
 
         // To achieve the amortized time of O(log n), we need to perform a cleanup step. In this step, we will
         // merge any tree roots that have the same degree. We use an array to efficiently match roots with the same degree.
@@ -248,15 +257,16 @@ public class FibonacciHeap<T> implements Iterable<FibonacciHeapEntry<T>> {
         // Instead of calculating this value based on the current size of the heap, we use a predefined value that is
         // sufficient for any case.
         @SuppressWarnings("unchecked")
-        FibonacciHeapEntry<T>[] treeRootsPerDegree = (FibonacciHeapEntry<T>[]) new FibonacciHeapEntry[MAX_ENTRY_DEGREE_PLUS_ONE];
+        FibonacciHeapEntry<K, V>[] treeRootsPerDegree =
+                (FibonacciHeapEntry<K, V>[]) new FibonacciHeapEntry[MAX_ENTRY_DEGREE_PLUS_ONE];
 
         // Merge any children of the minTreeRoot in the root list, after the minTreeRoot
         moveChildrenToSiblings(minTreeRoot);
 
         // Prepare to iterate over all tree roots
-        FibonacciHeapEntry<T> borderEntry = minTreeRoot;
-        FibonacciHeapEntry<T> currentEntry = borderEntry.nextSibling;
-        FibonacciHeapEntry<T> newMinTreeRoot = currentEntry;
+        FibonacciHeapEntry<K, V> borderEntry = minTreeRoot;
+        FibonacciHeapEntry<K, V> currentEntry = borderEntry.nextSibling;
+        FibonacciHeapEntry<K, V> newMinTreeRoot = currentEntry;
 
         // Iterate over all tree roots, except for the minTreeRoot
         while (currentEntry != borderEntry) {
@@ -264,14 +274,14 @@ public class FibonacciHeap<T> implements Iterable<FibonacciHeapEntry<T>> {
             currentEntry.parent = null;
             currentEntry.marked = false;
 
-            FibonacciHeapEntry<T> nextEntry = currentEntry.nextSibling;
+            FibonacciHeapEntry<K, V> nextEntry = currentEntry.nextSibling;
 
             // Find and merge any trees that have the same root degree
-            FibonacciHeapEntry<T> sameDegreeEntry = treeRootsPerDegree[currentEntry.degree];
+            FibonacciHeapEntry<K, V> sameDegreeEntry = treeRootsPerDegree[currentEntry.degree];
             while (sameDegreeEntry != null) {
                 treeRootsPerDegree[currentEntry.degree] = null;
                 // Merge sameDegreeEntry and currentEntry
-                if (sameDegreeEntry.key < currentEntry.key) {
+                if (keyComparator.compare(sameDegreeEntry.key, currentEntry.key) < 0) {
                     extract(currentEntry);
                     makeChildOf(currentEntry, sameDegreeEntry);
                     currentEntry = sameDegreeEntry;
@@ -287,7 +297,7 @@ public class FibonacciHeap<T> implements Iterable<FibonacciHeapEntry<T>> {
             treeRootsPerDegree[currentEntry.degree] = currentEntry;
 
             // Keep an eye out for the entry with the lowest key
-            if (currentEntry.key <= newMinTreeRoot.key)
+            if (keyComparator.compare(currentEntry.key, newMinTreeRoot.key) <= 0)
                 newMinTreeRoot = currentEntry;
 
             currentEntry = nextEntry;
@@ -318,7 +328,7 @@ public class FibonacciHeap<T> implements Iterable<FibonacciHeapEntry<T>> {
      * @param entry an entry owned by this queue
      * @throws IllegalArgumentException if it can be determined that the specified entry is no longer part of any heap
      */
-    public void delete(FibonacciHeapEntry<T> entry) {
+    public void delete(FibonacciHeapEntry<K, V> entry) {
         if (entry.hasBeenRemoved())
             throw new IllegalArgumentException("Attempting to delete an entry that is no longer present in a heap.");
 
@@ -349,13 +359,13 @@ public class FibonacciHeap<T> implements Iterable<FibonacciHeapEntry<T>> {
         if (entry.parent != null) { // Case 3 only
             // Note that we cannot use decreaseKey itself, since the entry might already have its key set to
             // negative infinity, in which case no action would be taken.
-            FibonacciHeapEntry<T> entryToPromote = entry;
+            FibonacciHeapEntry<K, V> entryToPromote = entry;
             while (entryToPromote != null)
                 entryToPromote = promote(entryToPromote);
         }
 
         // Update child pointers to parent
-        FibonacciHeapEntry<T> travellingEntry = entry.child;
+        FibonacciHeapEntry<K, V> travellingEntry = entry.child;
         for (int i = entry.degree; i > 0; i--) {
             travellingEntry.parent = null;
             travellingEntry.marked = false;
@@ -379,14 +389,15 @@ public class FibonacciHeap<T> implements Iterable<FibonacciHeapEntry<T>> {
      * This operation runs in {@code O(1)}.
      * @param otherHeap the heap to merge, which will be cleared as a result of this call
      */
-    public void merge(FibonacciHeap<T> otherHeap) {
+    public void merge(FibonacciHeap<K, V> otherHeap) {
         if (minTreeRoot != null && otherHeap.minTreeRoot != null) {
             minTreeRoot.nextSibling.prevSibling = otherHeap.minTreeRoot.prevSibling;
             otherHeap.minTreeRoot.prevSibling.nextSibling = minTreeRoot.nextSibling;
             minTreeRoot.nextSibling = otherHeap.minTreeRoot;
             otherHeap.minTreeRoot.prevSibling = minTreeRoot;
         }
-        if (minTreeRoot == null || (otherHeap.minTreeRoot != null && minTreeRoot.key > otherHeap.minTreeRoot.key))
+        if (minTreeRoot == null ||
+                (otherHeap.minTreeRoot != null && keyComparator.compare(minTreeRoot.key, otherHeap.minTreeRoot.key) > 0))
             minTreeRoot = otherHeap.minTreeRoot;
 
         size += otherHeap.size;
@@ -399,7 +410,7 @@ public class FibonacciHeap<T> implements Iterable<FibonacciHeapEntry<T>> {
      * support removal. The behavior of the iterator is undefined once the heap is modified.
      * @return an Iterator
      */
-    public Iterator<FibonacciHeapEntry<T>> iterator() {
+    public Iterator<FibonacciHeapEntry<K, V>> iterator() {
         if (isEmpty())
             return Iterators.emptyIterator();
         else
@@ -412,16 +423,16 @@ public class FibonacciHeap<T> implements Iterable<FibonacciHeapEntry<T>> {
      * the results of the iteration are undefined.
      * @return an unmodifiable collection
      */
-    public Collection<T> asCollection() {
-        final Function<FibonacciHeapEntry<T>, T> valueFunction = new Function<FibonacciHeapEntry<T>, T>() {
+    public Collection<V> asCollection() {
+        final Function<FibonacciHeapEntry<K, V>, V> valueFunction = new Function<FibonacciHeapEntry<K, V>, V>() {
             @Override
-            public T apply(FibonacciHeapEntry<T> input) {
+            public V apply(FibonacciHeapEntry<K, V> input) {
                 return input.getValue();
             }
         };
-        return new AbstractCollection<T>() {
+        return new AbstractCollection<V>() {
             @Override
-            public Iterator<T> iterator() {
+            public Iterator<V> iterator() {
                 return Iterators.transform(FibonacciHeap.this.iterator(), valueFunction);
             }
 
@@ -446,7 +457,7 @@ public class FibonacciHeap<T> implements Iterable<FibonacciHeapEntry<T>> {
      * This operation runs in {@code O(1)}.
      * @return an entry owned by this heap
      */
-    public FibonacciHeapEntry<T> findMinimum() {
+    public FibonacciHeapEntry<K, V> findMinimum() {
         return minTreeRoot;
     }
 
