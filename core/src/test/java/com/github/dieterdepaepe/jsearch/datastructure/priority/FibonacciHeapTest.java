@@ -2,6 +2,8 @@ package com.github.dieterdepaepe.jsearch.datastructure.priority;
 
 import static org.testng.Assert.*;
 
+import com.google.common.collect.Iterators;
+import com.google.common.collect.Sets;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -284,6 +286,45 @@ public class FibonacciHeapTest {
     public void testExceptionOnNanDecreaseKey() {
         FibonacciHeapEntry<Object> entry = heap.insert(new Object(), 0);
         heap.decreaseKey(entry, Double.NaN);
+    }
+
+    @Test
+    public void testIterator() {
+        assertEquals(Iterators.size(heap.iterator()), 0);
+
+        FibonacciHeapEntry<Object> entry1 = heap.insert("Hello", 3);
+        FibonacciHeapEntry<Object> entry2 = heap.insert("World", 1);
+        FibonacciHeapEntry<Object> entry3 = heap.insert("how", 5);
+        FibonacciHeapEntry<Object> entry4 = heap.insert("are", 4);
+        FibonacciHeapEntry<Object> entry5 = heap.insert("you", 2);
+
+        assertEquals(heap.asCollection().size(), 5);
+        assertEquals(Sets.newHashSet(heap.iterator()), Sets.<FibonacciHeapEntry>newHashSet(entry1, entry2, entry3, entry4, entry5));
+
+        heap.deleteMinimum();
+        heap.decreaseKey(entry3, 0);
+
+        assertEquals(heap.asCollection().size(), 4);
+        assertEquals(Sets.newHashSet(heap.iterator()), Sets.<FibonacciHeapEntry>newHashSet(entry1, entry3, entry4, entry5));
+    }
+
+    @Test
+    public void testAsCollection() {
+        assertTrue(heap.asCollection().isEmpty());
+
+        heap.insert("Hello", 3);
+        heap.insert("World", 1);
+        heap.insert("how", 5);
+        heap.insert("are", 4);
+        heap.insert("you", 2);
+
+        assertEquals(heap.asCollection().size(), 5);
+        assertEquals(Sets.newHashSet(heap.asCollection()), Sets.newHashSet("Hello", "World", "how", "are", "you"));
+
+        heap.deleteMinimum();
+
+        assertEquals(heap.asCollection().size(), 4);
+        assertEquals(Sets.newHashSet(heap.asCollection()), Sets.newHashSet("Hello", "how", "are", "you"));
     }
 
     private List<Integer> generateNumbers(int amount, int start, int step) {

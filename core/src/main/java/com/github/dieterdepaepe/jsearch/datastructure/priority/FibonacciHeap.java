@@ -1,5 +1,12 @@
 package com.github.dieterdepaepe.jsearch.datastructure.priority;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Iterators;
+
+import java.util.AbstractCollection;
+import java.util.Collection;
+import java.util.Iterator;
+
 /**
  * A <a href="http://en.wikipedia.org/wiki/Fibonacci_heap">Fibonacci heap</a> is an efficient priority queue which
  * provides better amortized running times than {@link java.util.PriorityQueue}.
@@ -34,7 +41,7 @@ package com.github.dieterdepaepe.jsearch.datastructure.priority;
  * @param <T> the type of the values being stored in this heap
  * @author Dieter De Paepe
  */
-public class FibonacciHeap<T> {
+public class FibonacciHeap<T> implements Iterable<FibonacciHeapEntry<T>> {
     private static final double PHI = 1.6180339887498948482;
     private static final int MAX_ENTRY_DEGREE_PLUS_ONE = (int) Math.floor(Math.log(Integer.MAX_VALUE) / Math.log(PHI)) + 1;
 
@@ -385,6 +392,44 @@ public class FibonacciHeap<T> {
         size += otherHeap.size;
 
         otherHeap.clear();
+    }
+
+    /**
+     * Returns an iterator that iterates over all entries in the heap in no particular order. The iterator does not
+     * support removal. The behavior of the iterator is undefined once the heap is modified.
+     * @return an Iterator
+     */
+    public Iterator<FibonacciHeapEntry<T>> iterator() {
+        if (isEmpty())
+            return Iterators.emptyIterator();
+        else
+            return new FibonacciHeapIterator<>(minTreeRoot);
+    }
+
+    /**
+     * Returns a collection view of the heap. The collection is backed by the heap, so any changes to the heap will
+     * be reflected in the collection. If the heap is modified while an iteration over the collection is in progress,
+     * the results of the iteration are undefined.
+     * @return an unmodifiable collection
+     */
+    public Collection<T> asCollection() {
+        final Function<FibonacciHeapEntry<T>, T> valueFunction = new Function<FibonacciHeapEntry<T>, T>() {
+            @Override
+            public T apply(FibonacciHeapEntry<T> input) {
+                return input.getValue();
+            }
+        };
+        return new AbstractCollection<T>() {
+            @Override
+            public Iterator<T> iterator() {
+                return Iterators.transform(FibonacciHeap.this.iterator(), valueFunction);
+            }
+
+            @Override
+            public int size() {
+                return FibonacciHeap.this.size();
+            }
+        };
     }
 
     /**
