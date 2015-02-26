@@ -2,8 +2,10 @@ package com.github.dieterdepaepe.jsearch.search.statespace.solver.beamsearch;
 
 import com.github.dieterdepaepe.jsearch.datastructure.priority.FibonacciHeap;
 import com.github.dieterdepaepe.jsearch.datastructure.priority.FibonacciHeapEntry;
+import com.github.dieterdepaepe.jsearch.search.statespace.Cost;
 import com.github.dieterdepaepe.jsearch.search.statespace.InformedSearchNode;
 import com.github.dieterdepaepe.jsearch.search.statespace.SearchNode;
+import com.google.common.collect.Ordering;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -42,38 +44,38 @@ public class SelectUniqueNBest implements BeamSearchSolver.ParentSelector<Search
 
     @Override
     public <S extends SearchNode> GenerationSelection<S> selectNodesToExpand(Iterable<InformedSearchNode<S>> nodesToChooseFrom, Object environment) {
-        FibonacciHeap<Double, InformedSearchNode<S>> heap = FibonacciHeap.create();
-        Map<Object, FibonacciHeapEntry<Double, InformedSearchNode<S>>> uniqueStates = new HashMap<>();
+        // We reverse the order, so the highest costs have the highest priority in the heap.
+        FibonacciHeap<Cost, InformedSearchNode<S>> heap = FibonacciHeap.create(Ordering.<Cost>natural().reverse());
+        Map<Object, FibonacciHeapEntry<Cost, InformedSearchNode<S>>> uniqueStates = new HashMap<>();
         InformedSearchNode<S> bestPrunedNode = null;
 
         for (InformedSearchNode<S> searchNode : nodesToChooseFrom) {
-            // We negate the cost, so the highest costs have the highest priority in the heap.
-            double heapKeyValue = -searchNode.getEstimatedTotalCost();
+            Cost heapKeyValue = searchNode.getEstimatedTotalCost();
 
-            FibonacciHeapEntry<Double, InformedSearchNode<S>> sameStateEntry = uniqueStates.get(searchNode.getSearchNode().getSearchSpaceState());
+            FibonacciHeapEntry<Cost, InformedSearchNode<S>> sameStateEntry = uniqueStates.get(searchNode.getSearchNode().getSearchSpaceState());
             if (sameStateEntry != null) {
-                if (sameStateEntry.getValue().getEstimatedTotalCost() > searchNode.getEstimatedTotalCost()) {
+                if (sameStateEntry.getValue().getEstimatedTotalCost().compareTo(searchNode.getEstimatedTotalCost()) > 0) {
                     heap.delete(sameStateEntry);
-                    FibonacciHeapEntry<Double, InformedSearchNode<S>> newEntry = heap.insert(heapKeyValue, searchNode);
+                    FibonacciHeapEntry<Cost, InformedSearchNode<S>> newEntry = heap.insert(heapKeyValue, searchNode);
                     uniqueStates.put(searchNode.getSearchNode().getSearchSpaceState(), newEntry);
                 }
                 continue;
             }
 
             if (heap.size() < n) {
-                FibonacciHeapEntry<Double, InformedSearchNode<S>> newEntry = heap.insert(heapKeyValue, searchNode);
+                FibonacciHeapEntry<Cost, InformedSearchNode<S>> newEntry = heap.insert(heapKeyValue, searchNode);
                 uniqueStates.put(searchNode.getSearchNode().getSearchSpaceState(), newEntry);
             } else {
-                FibonacciHeapEntry<Double, InformedSearchNode<S>> mostExpensiveEntryInHeap = heap.findMinimum();
-                if (searchNode.getEstimatedTotalCost() >= mostExpensiveEntryInHeap.getValue().getEstimatedTotalCost())
+                FibonacciHeapEntry<Cost, InformedSearchNode<S>> mostExpensiveEntryInHeap = heap.findMinimum();
+                if (searchNode.getEstimatedTotalCost().compareTo(mostExpensiveEntryInHeap.getValue().getEstimatedTotalCost()) >= 0)
                     continue;
 
-                FibonacciHeapEntry<Double, InformedSearchNode<S>> removedEntry = heap.deleteMinimum();
+                FibonacciHeapEntry<Cost, InformedSearchNode<S>> removedEntry = heap.deleteMinimum();
                 uniqueStates.remove(removedEntry.getValue().getSearchNode().getSearchSpaceState());
-                FibonacciHeapEntry<Double, InformedSearchNode<S>> newEntry = heap.insert(heapKeyValue, searchNode);
+                FibonacciHeapEntry<Cost, InformedSearchNode<S>> newEntry = heap.insert(heapKeyValue, searchNode);
                 uniqueStates.put(searchNode.getSearchNode().getSearchSpaceState(), newEntry);
 
-                if (bestPrunedNode == null || bestPrunedNode.getEstimatedTotalCost() > removedEntry.getValue().getEstimatedTotalCost())
+                if (bestPrunedNode == null || bestPrunedNode.getEstimatedTotalCost().compareTo(removedEntry.getValue().getEstimatedTotalCost()) > 0)
                     bestPrunedNode = removedEntry.getValue();
             }
         }

@@ -6,6 +6,7 @@ import com.github.dieterdepaepe.jsearch.problem.dummy.DummySearchNode;
 import com.github.dieterdepaepe.jsearch.search.statespace.SearchNode;
 import com.github.dieterdepaepe.jsearch.search.statespace.Solver;
 import com.github.dieterdepaepe.jsearch.search.statespace.Solvers;
+import com.github.dieterdepaepe.jsearch.search.statespace.cost.DoubleCost;
 import com.github.dieterdepaepe.jsearch.search.statespace.dev.LoggingGenerator;
 import com.github.dieterdepaepe.jsearch.search.statespace.solver.BasicSolverTest;
 import com.github.dieterdepaepe.jsearch.search.statespace.util.BasicManager;
@@ -15,9 +16,7 @@ import org.testng.annotations.Test;
 
 import java.util.Arrays;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNull;
-import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.*;
 
 /**
  * Test class for {@link com.github.dieterdepaepe.jsearch.search.statespace.solver.idastar.IDAStarSolver}.
@@ -68,7 +67,7 @@ public class IDAStarSolverTest extends BasicSolverTest {
 
         LoggingGenerator<DummySearchNode, Object> generator = new LoggingGenerator<>(new DummyGenerator<>(successors));
         DummyHeuristic heuristic = new DummyHeuristic();
-        BasicManager<DummySearchNode> manager = new BasicManager<>();
+        BasicManager<DummySearchNode> manager = new BasicManager<>(DoubleCost.valueOf(Double.MAX_VALUE));
         IDAStarSolver solver = new IDAStarSolver();
 
         Solvers.solve(solver, manager, generator, heuristic, null, a, b);
@@ -93,7 +92,7 @@ public class IDAStarSolverTest extends BasicSolverTest {
         //    |     |
         // f(-5)   g(5)
 
-        //Note: g has a lower cost than its parent, which is may lead to problems in other solvers, but works for this one.
+        //Note: g has a lower cost than its parent, which may lead to problems in other solvers, but works for this one.
 
         DummySearchNode a = new DummySearchNode("a", 0, 0, false);
         DummySearchNode b = new DummySearchNode("b", Double.NEGATIVE_INFINITY, 0, false);
@@ -111,7 +110,7 @@ public class IDAStarSolverTest extends BasicSolverTest {
 
         LoggingGenerator<DummySearchNode, Object> generator = new LoggingGenerator<>(new DummyGenerator<>(successors));
         DummyHeuristic heuristic = new DummyHeuristic();
-        BasicManager<DummySearchNode> manager = new BasicManager<>();
+        BasicManager<DummySearchNode> manager = new BasicManager<>(DoubleCost.valueOf(Double.POSITIVE_INFINITY));
         IDAStarSolver solver = new IDAStarSolver();
 
         Solvers.solve(solver, manager, generator, heuristic, null, a, b, c);
@@ -147,7 +146,7 @@ public class IDAStarSolverTest extends BasicSolverTest {
 
         LoggingGenerator<DummySearchNode, Object> generator = new LoggingGenerator<>(new DummyGenerator<>(successors));
         DummyHeuristic heuristic = new DummyHeuristic();
-        BasicManager<DummySearchNode> manager = new BasicManager<>();
+        BasicManager<DummySearchNode> manager = new BasicManager<>(DoubleCost.valueOf(Double.MAX_VALUE));
         IDAStarSolver solver = new IDAStarSolver();
 
         Solvers.solve(solver, manager, generator, heuristic, null, a, b, d);

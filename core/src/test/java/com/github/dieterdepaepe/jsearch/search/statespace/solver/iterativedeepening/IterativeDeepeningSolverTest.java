@@ -3,6 +3,7 @@ package com.github.dieterdepaepe.jsearch.search.statespace.solver.iterativedeepe
 import com.github.dieterdepaepe.jsearch.problem.dummy.DummyGenerator;
 import com.github.dieterdepaepe.jsearch.problem.dummy.DummyHeuristic;
 import com.github.dieterdepaepe.jsearch.search.statespace.Solvers;
+import com.github.dieterdepaepe.jsearch.search.statespace.cost.DoubleCost;
 import com.github.dieterdepaepe.jsearch.search.statespace.dev.LoggingGenerator;
 import com.github.dieterdepaepe.jsearch.search.statespace.solver.DepthFirstSolver;
 import com.github.dieterdepaepe.jsearch.search.statespace.util.BasicManager;
@@ -12,9 +13,7 @@ import org.testng.annotations.Test;
 
 import java.util.Arrays;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNull;
-import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.*;
 
 /**
  * Test class for {@link com.github.dieterdepaepe.jsearch.search.statespace.solver.iterativedeepening.IterativeDeepeningSolver}.
@@ -52,7 +51,7 @@ public class IterativeDeepeningSolverTest {
 
         LoggingGenerator<DummyDepthSearchNode, Object> generator = new LoggingGenerator<>(new DummyGenerator<>(successors));
         DummyHeuristic heuristic = new DummyHeuristic();
-        BasicManager<DummyDepthSearchNode> manager = new BasicManager<>();
+        BasicManager<DummyDepthSearchNode> manager = new BasicManager<>(DoubleCost.valueOf(Double.POSITIVE_INFINITY));
         IterativeDeepeningSolver<DummyDepthSearchNode, Object> solver = new IterativeDeepeningSolver<>(new DepthFirstSolver());
 
         Solvers.solve(solver, manager, generator, heuristic, null, a);
@@ -101,7 +100,7 @@ public class IterativeDeepeningSolverTest {
 
         LoggingGenerator<DummyDepthSearchNode, Object> generator = new LoggingGenerator<>(new DummyGenerator<>(successors));
         DummyHeuristic heuristic = new DummyHeuristic();
-        BasicManager<DummyDepthSearchNode> manager = new BasicManager<>();
+        BasicManager<DummyDepthSearchNode> manager = new BasicManager<>(DoubleCost.valueOf(Double.POSITIVE_INFINITY));
         IterativeDeepeningSolver<DummyDepthSearchNode, Object> solver = new IterativeDeepeningSolver<>(new DepthFirstSolver());
 
         Solvers.solve(solver, manager, generator, heuristic, null, a);

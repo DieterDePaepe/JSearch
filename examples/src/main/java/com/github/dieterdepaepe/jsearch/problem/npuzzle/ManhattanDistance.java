@@ -1,6 +1,7 @@
 package com.github.dieterdepaepe.jsearch.problem.npuzzle;
 
 import com.github.dieterdepaepe.jsearch.search.statespace.Heuristic;
+import com.github.dieterdepaepe.jsearch.search.statespace.cost.IntegerCost;
 
 /**
  * Manhattan distance heuristic for N-Puzzle. It estimates the remaining cost as the total distance that each field
@@ -9,7 +10,7 @@ import com.github.dieterdepaepe.jsearch.search.statespace.Heuristic;
  */
 public class ManhattanDistance implements Heuristic<PuzzleSearchNode, PuzzleEnvironment> {
     @Override
-    public double estimateRemainingCost(PuzzleSearchNode node, PuzzleEnvironment environment) {
+    public IntegerCost estimateRemainingCost(PuzzleSearchNode node, PuzzleEnvironment environment) {
         SlidingPuzzle puzzle = environment.getPuzzle();
         PuzzleFields targetState = environment.getTargetState();
         PuzzleFields currentState = node.getPuzzleFields();
@@ -24,6 +25,6 @@ public class ManhattanDistance implements Heuristic<PuzzleSearchNode, PuzzleEnvi
                 estimate += Math.abs(targetIndex.row - row) + Math.abs(targetIndex.column - column);
             }
 
-        return estimate;
+        return IntegerCost.valueOf(estimate);
     }
 }

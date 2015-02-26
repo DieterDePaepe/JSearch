@@ -25,5 +25,5 @@ public interface Manager<T extends SearchNode> {
      * than the returned value.
      * @return a cost bound
      */
-    public double getCostBound();
+    public Cost getCostBound();
 }

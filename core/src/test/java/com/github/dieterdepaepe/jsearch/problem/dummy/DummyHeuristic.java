@@ -1,5 +1,6 @@
 package com.github.dieterdepaepe.jsearch.problem.dummy;
 
+import com.github.dieterdepaepe.jsearch.search.statespace.Cost;
 import com.github.dieterdepaepe.jsearch.search.statespace.Heuristic;
 
 /**
@@ -8,7 +9,7 @@ import com.github.dieterdepaepe.jsearch.search.statespace.Heuristic;
  */
 public class DummyHeuristic implements Heuristic<DummySearchNode, Object> {
     @Override
-    public double estimateRemainingCost(DummySearchNode node, Object environment) {
+    public Cost estimateRemainingCost(DummySearchNode node, Object environment) {
         return node.getHeuristicValue();
     }
 }

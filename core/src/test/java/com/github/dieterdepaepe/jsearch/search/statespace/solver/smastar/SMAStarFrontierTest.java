@@ -2,11 +2,14 @@ package com.github.dieterdepaepe.jsearch.search.statespace.solver.smastar;
 
 import com.github.dieterdepaepe.jsearch.search.statespace.InformedSearchNode;
 import com.github.dieterdepaepe.jsearch.search.statespace.SearchNode;
+import com.github.dieterdepaepe.jsearch.search.statespace.cost.DoubleCost;
 import org.testng.annotations.Test;
 
-import static org.testng.Assert.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Iterator;
 
-import java.util.*;
+import static org.testng.Assert.*;
 
 /**
  * Testing class for {@link com.github.dieterdepaepe.jsearch.search.statespace.solver.smastar.SMAStarFrontier}.
@@ -91,11 +94,11 @@ public class SMAStarFrontierTest {
     }
 
     private SMASearchNode<DummySearchNode> createNode(int depth, double cost) {
-        return new SMASearchNode<>(new DummySearchNode(), null, depth, cost);
+        return new SMASearchNode<>(new DummySearchNode(), null, depth, DoubleCost.valueOf(cost));
     }
 
     private SMASearchNode<DummySearchNode> createNodeWithParent(int depth, double cost, SMASearchNode<DummySearchNode> parent) {
-        SMASearchNode<DummySearchNode> result = new SMASearchNode<>(new DummySearchNode(), parent, depth, cost);
+        SMASearchNode<DummySearchNode> result = new SMASearchNode<>(new DummySearchNode(), parent, depth, DoubleCost.valueOf(cost));
         Collection<SMASearchNode<DummySearchNode>> children = parent.getChildrenInMemory();
         if (children.isEmpty()) {
             parent.initialiseChildren(new NonEmptyIterable<InformedSearchNode<DummySearchNode>>());
@@ -110,7 +113,7 @@ public class SMAStarFrontierTest {
         public boolean isGoal() { return false; }
 
         @Override
-        public double getCost() { return 0; }
+        public DoubleCost getCost() { return DoubleCost.valueOf(0); }
 
         @Override
         public Object getSearchSpaceState() { return this; }

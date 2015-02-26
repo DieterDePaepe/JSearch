@@ -3,7 +3,11 @@ package com.github.dieterdepaepe.jsearch.search.statespace.solver;
 import com.github.dieterdepaepe.jsearch.problem.dummy.DummyGenerator;
 import com.github.dieterdepaepe.jsearch.problem.dummy.DummyHeuristic;
 import com.github.dieterdepaepe.jsearch.problem.dummy.DummySearchNode;
-import com.github.dieterdepaepe.jsearch.search.statespace.*;
+import com.github.dieterdepaepe.jsearch.search.statespace.SearchNode;
+import com.github.dieterdepaepe.jsearch.search.statespace.Solution;
+import com.github.dieterdepaepe.jsearch.search.statespace.Solver;
+import com.github.dieterdepaepe.jsearch.search.statespace.Solvers;
+import com.github.dieterdepaepe.jsearch.search.statespace.cost.DoubleCost;
 import com.github.dieterdepaepe.jsearch.search.statespace.dev.LoggingGenerator;
 import com.github.dieterdepaepe.jsearch.search.statespace.util.BasicManager;
 import com.google.common.collect.ArrayListMultimap;
@@ -54,7 +58,7 @@ public class RBFSSolverTest extends BasicSolverTest {
 
         LoggingGenerator<DummySearchNode, Object> generator = new LoggingGenerator<>(new DummyGenerator<>(successors));
         DummyHeuristic heuristic = new DummyHeuristic();
-        BasicManager<DummySearchNode> manager = new BasicManager<>();
+        BasicManager<DummySearchNode> manager = new BasicManager<>(DoubleCost.valueOf(Double.POSITIVE_INFINITY));
         RBFSSolver solver = new RBFSSolver();
 
         Solvers.solve(solver, manager, generator, heuristic, null, a);
@@ -77,7 +81,7 @@ public class RBFSSolverTest extends BasicSolverTest {
         RBFSSolver solver = new RBFSSolver();
         DummyGenerator<DummySearchNode> generator = new DummyGenerator<>(stateChildren);
         DummyHeuristic heuristic = new DummyHeuristic();
-        BasicManager<DummySearchNode> manager = new BasicManager<>(3.0);
+        BasicManager<DummySearchNode> manager = new BasicManager<>(DoubleCost.valueOf(3.));
 
         Solvers.solve(solver, manager, generator, heuristic, null, startState);
 

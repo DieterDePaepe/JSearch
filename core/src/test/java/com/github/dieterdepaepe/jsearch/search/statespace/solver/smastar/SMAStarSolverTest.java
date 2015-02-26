@@ -6,6 +6,7 @@ import com.github.dieterdepaepe.jsearch.problem.dummy.DummySearchNode;
 import com.github.dieterdepaepe.jsearch.search.statespace.SearchNode;
 import com.github.dieterdepaepe.jsearch.search.statespace.Solver;
 import com.github.dieterdepaepe.jsearch.search.statespace.Solvers;
+import com.github.dieterdepaepe.jsearch.search.statespace.cost.DoubleCost;
 import com.github.dieterdepaepe.jsearch.search.statespace.dev.LoggingGenerator;
 import com.github.dieterdepaepe.jsearch.search.statespace.solver.BasicSolverTest;
 import com.github.dieterdepaepe.jsearch.search.statespace.util.BasicManager;
@@ -58,7 +59,7 @@ public class SMAStarSolverTest extends BasicSolverTest {
 
         LoggingGenerator<DummySearchNode, Object> generator = new LoggingGenerator<>(new DummyGenerator<>(successors));
         DummyHeuristic heuristic = new DummyHeuristic();
-        BasicManager<DummySearchNode> manager = new BasicManager<>();
+        BasicManager<DummySearchNode> manager = new BasicManager<>(DoubleCost.valueOf(Double.MAX_VALUE));
         SMAStarSolver solver = new SMAStarSolver(4);
 
         Solvers.solve(solver, manager, generator, heuristic, null, a);
@@ -103,7 +104,7 @@ public class SMAStarSolverTest extends BasicSolverTest {
 
         LoggingGenerator<DummySearchNode, Object> generator = new LoggingGenerator<>(new DummyGenerator<>(successors));
         DummyHeuristic heuristic = new DummyHeuristic();
-        BasicManager<DummySearchNode> manager = new BasicManager<>();
+        BasicManager<DummySearchNode> manager = new BasicManager<>(DoubleCost.valueOf(Double.MAX_VALUE));
         SMAStarSolver solver = new SMAStarSolver(4);
 
         Solvers.solve(solver, manager, generator, heuristic, null, a);
@@ -149,7 +150,7 @@ public class SMAStarSolverTest extends BasicSolverTest {
 
         LoggingGenerator<DummySearchNode, Object> generator = new LoggingGenerator<>(new DummyGenerator<>(successors));
         DummyHeuristic heuristic = new DummyHeuristic();
-        BasicManager<DummySearchNode> manager = new BasicManager<>();
+        BasicManager<DummySearchNode> manager = new BasicManager<>(DoubleCost.valueOf(Double.MAX_VALUE));
         SMAStarSolver solver = new SMAStarSolver(3); //Insufficient memory to find the true optimal solution (E)
 
         Solvers.solve(solver, manager, generator, heuristic, null, a);
@@ -183,7 +184,7 @@ public class SMAStarSolverTest extends BasicSolverTest {
 
         LoggingGenerator<DummySearchNode, Object> generator = new LoggingGenerator<>(new DummyGenerator<>(successors));
         DummyHeuristic heuristic = new DummyHeuristic();
-        BasicManager<DummySearchNode> manager = new BasicManager<>();
+        BasicManager<DummySearchNode> manager = new BasicManager<>(DoubleCost.valueOf(Double.MAX_VALUE));
         SMAStarSolver solver = new SMAStarSolver(2); //Insufficient memory to find any solution
 
         Solvers.solve(solver, manager, generator, heuristic, null, a);

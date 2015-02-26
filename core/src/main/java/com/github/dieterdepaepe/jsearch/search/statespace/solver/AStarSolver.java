@@ -33,11 +33,11 @@ public class AStarSolver implements Solver<SearchNode, Object> {
                                                 Heuristic<? super S, ? super E> heuristic,
                                                 SearchNodeGenerator<S, E> searchNodeGenerator,
                                                 Manager<? super S> manager) {
-        FibonacciHeap<Double, InformedSearchNode<S>> heap = FibonacciHeap.create();
-        double costBound = manager.getCostBound();
+        FibonacciHeap<Cost, InformedSearchNode<S>> heap = FibonacciHeap.create();
+        Cost costBound = manager.getCostBound();
 
         for (InformedSearchNode<S> startNode : startNodes)
-            if (startNode.getEstimatedTotalCost() <= costBound)
+            if (startNode.getEstimatedTotalCost().compareTo(costBound) <= 0)
                 heap.insert(startNode.getEstimatedTotalCost(), startNode);
 
         while (!heap.isEmpty() && manager.continueSearch()) {
@@ -45,7 +45,7 @@ public class AStarSolver implements Solver<SearchNode, Object> {
             costBound = manager.getCostBound();
 
             // The cost bound might have been lowered since this state was added to the queue, we need to check it again.
-            if (informedNodeToExpand.getEstimatedTotalCost() > costBound)
+            if (informedNodeToExpand.getEstimatedTotalCost().compareTo(costBound) > 0)
                 return;
 
             S nodeToExpand = informedNodeToExpand.getSearchNode();
@@ -56,7 +56,7 @@ public class AStarSolver implements Solver<SearchNode, Object> {
 
             for (InformedSearchNode<S> successor : searchNodeGenerator.generateSuccessorNodes(nodeToExpand, environment, heuristic)) {
                 // Since A* can be very memory expensive, we do a premature purging of search nodes.
-                if (successor.getEstimatedTotalCost() <= costBound)
+                if (successor.getEstimatedTotalCost().compareTo(costBound) <= 0)
                     heap.insert(successor.getEstimatedTotalCost(), successor);
             }
         }

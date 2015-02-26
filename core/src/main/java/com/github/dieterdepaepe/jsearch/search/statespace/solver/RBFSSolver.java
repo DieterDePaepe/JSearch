@@ -4,6 +4,7 @@ import com.github.dieterdepaepe.jsearch.search.statespace.*;
 import com.github.dieterdepaepe.jsearch.search.statespace.util.BasicSolution;
 import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Ordering;
 
 import java.util.*;
 
@@ -49,9 +50,9 @@ public class RBFSSolver implements Solver<SearchNode, Object> {
         Deque<SearchTreeLevel<S>> levelStack = new ArrayDeque<>();
 
         List<RBFSSearchNode<S>> startingSearchNodes = new ArrayList<>();
-        double costBound = manager.getCostBound();
+        Cost costBound = manager.getCostBound();
         for (InformedSearchNode<S> startNode : startNodes) {
-            if (startNode.getEstimatedTotalCost() <= costBound)
+            if (startNode.getEstimatedTotalCost().compareTo(costBound) <= 0)
                 startingSearchNodes.add(new RBFSSearchNode<>(startNode.getSearchNode(), startNode.getEstimatedTotalCost()));
         }
         if (startingSearchNodes.isEmpty())
@@ -65,13 +66,14 @@ public class RBFSSolver implements Solver<SearchNode, Object> {
             Collections.sort(searchNodes);
             RBFSSearchNode<S> bestCostNode = searchNodes.get(0);
 
-            currentLevel.cutoffCost = Math.min(currentLevel.cutoffCost, manager.getCostBound());
-            if (bestCostNode.minimumSolutionCost > currentLevel.cutoffCost || !bestCostNode.mayLeadToSolution) {
+            currentLevel.cutoffCost = Ordering.natural().min(currentLevel.cutoffCost, manager.getCostBound());
+            if (bestCostNode.minimumSolutionCost.compareTo(currentLevel.cutoffCost) > 0 || !bestCostNode.mayLeadToSolution) {
                 if (levelStack.size() > 1) {
                     // Move up the search tree to look somewhere else, updating the minimum cost of the parent node
                     levelStack.removeFirst();
-                    levelStack.peekFirst().nodes.get(0).minimumSolutionCost = bestCostNode.minimumSolutionCost;
-                    levelStack.peekFirst().nodes.get(0).mayLeadToSolution = bestCostNode.mayLeadToSolution;
+                    RBFSSearchNode<S> searchNode = levelStack.peekFirst().nodes.get(0);
+                    searchNode.minimumSolutionCost = bestCostNode.minimumSolutionCost;
+                    searchNode.mayLeadToSolution = bestCostNode.mayLeadToSolution;
                     continue;
                 } else {
                     // No solution can be found
@@ -86,7 +88,6 @@ public class RBFSSolver implements Solver<SearchNode, Object> {
 
             Iterable<InformedSearchNode<S>> successors = searchNodeGenerator.generateSuccessorNodes(bestCostNode.searchNode, environment, heuristic);
             if (Iterables.isEmpty(successors)) {
-                bestCostNode.minimumSolutionCost = Double.POSITIVE_INFINITY;
                 bestCostNode.mayLeadToSolution = false;
                 continue;
             }
@@ -95,12 +96,12 @@ public class RBFSSolver implements Solver<SearchNode, Object> {
             for (InformedSearchNode<S> successor : successors) {
                 // By taking the minimum solution cost of the parent node into account, we can prevent unneeded backtracking
                 // caused by using the minimum solution cost as the cutoff cost for a next iteration.
-                rbfsSuccessors.add(new RBFSSearchNode<>(successor.getSearchNode(), Math.max(successor.getEstimatedTotalCost(), bestCostNode.minimumSolutionCost)));
+                rbfsSuccessors.add(new RBFSSearchNode<>(successor.getSearchNode(), Ordering.natural().max(successor.getEstimatedTotalCost(), bestCostNode.minimumSolutionCost)));
             }
 
-            double newCutoffCost = currentLevel.cutoffCost;
-            if (currentLevel.nodes.size() >= 2)
-                newCutoffCost = Math.min(newCutoffCost, currentLevel.nodes.get(1).minimumSolutionCost);
+            Cost newCutoffCost = currentLevel.cutoffCost;
+            if (currentLevel.nodes.size() >= 2 && currentLevel.nodes.get(1).mayLeadToSolution)
+                newCutoffCost = Ordering.natural().min(newCutoffCost, currentLevel.nodes.get(1).minimumSolutionCost);
 
             levelStack.addFirst(new SearchTreeLevel<>(newCutoffCost, rbfsSuccessors));
         }
@@ -111,10 +112,10 @@ public class RBFSSolver implements Solver<SearchNode, Object> {
      * @param <T> the type of the search nodes contained
      */
     private static class SearchTreeLevel<T extends SearchNode> {
-        private double cutoffCost;
+        private Cost cutoffCost;
         private List<RBFSSearchNode<T>> nodes;
 
-        private SearchTreeLevel(double cutoffCost, List<RBFSSearchNode<T>> nodes) {
+        private SearchTreeLevel(Cost cutoffCost, List<RBFSSearchNode<T>> nodes) {
             this.cutoffCost = cutoffCost;
             this.nodes = nodes;
         }
@@ -127,10 +128,10 @@ public class RBFSSolver implements Solver<SearchNode, Object> {
      */
     private static class RBFSSearchNode<T extends SearchNode> implements Comparable<RBFSSearchNode<T>> {
         private T searchNode;
-        private double minimumSolutionCost;
+        private Cost minimumSolutionCost;
         private boolean mayLeadToSolution;
 
-        private RBFSSearchNode(T searchNode, double minimumSolutionCost) {
+        private RBFSSearchNode(T searchNode, Cost minimumSolutionCost) {
             this.searchNode = searchNode;
             this.minimumSolutionCost = minimumSolutionCost;
             this.mayLeadToSolution = true;

@@ -9,14 +9,14 @@ package com.github.dieterdepaepe.jsearch.search.statespace;
  */
 public class InformedSearchNode<T extends SearchNode> implements Comparable<InformedSearchNode<T>> {
     private final T searchNode;
-    private final double estimatedRemainingCost;
+    private final Cost estimatedRemainingCost;
 
     /**
      * Creates a new instance.
      * @param searchNode a node
      * @param estimatedRemainingCost an estimate of the remaining cost before the node can reach a solution
      */
-    public InformedSearchNode(T searchNode, double estimatedRemainingCost) {
+    public InformedSearchNode(T searchNode, Cost estimatedRemainingCost) {
         this.searchNode = searchNode;
         this.estimatedRemainingCost = estimatedRemainingCost;
     }
@@ -25,16 +25,16 @@ public class InformedSearchNode<T extends SearchNode> implements Comparable<Info
         return searchNode;
     }
 
-    public double getEstimatedRemainingCost() {
+    public Cost getEstimatedRemainingCost() {
         return estimatedRemainingCost;
     }
 
-    public double getEstimatedTotalCost() {
-        return getSearchNode().getCost() + getEstimatedRemainingCost();
+    public Cost getEstimatedTotalCost() {
+        return getSearchNode().getCost().add(getEstimatedRemainingCost());
     }
 
     @Override
     public int compareTo(InformedSearchNode<T> o) {
-        return Double.compare(getEstimatedTotalCost(), o.getEstimatedTotalCost());
+        return getEstimatedTotalCost().compareTo(o.getEstimatedTotalCost());
     }
 }

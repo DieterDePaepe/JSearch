@@ -26,7 +26,7 @@ public interface SearchNode {
      * Returns the exact cost associated with this search node.
      * @return the cost
      */
-    public double getCost();
+    public Cost getCost();
 
     /**
      * Returns a (lightweight) object that represents the search space state that has been reached by this node.

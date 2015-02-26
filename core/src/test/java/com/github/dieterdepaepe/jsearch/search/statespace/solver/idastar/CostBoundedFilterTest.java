@@ -2,11 +2,10 @@ package com.github.dieterdepaepe.jsearch.search.statespace.solver.idastar;
 
 import com.github.dieterdepaepe.jsearch.problem.dummy.DummySearchNode;
 import com.github.dieterdepaepe.jsearch.search.statespace.InformedSearchNode;
+import com.github.dieterdepaepe.jsearch.search.statespace.cost.DoubleCost;
 import org.testng.annotations.Test;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.*;
 
 /**
  * Test class for {@link com.github.dieterdepaepe.jsearch.search.statespace.solver.idastar.CostBoundedFilter}.
@@ -15,7 +14,7 @@ import static org.testng.Assert.assertTrue;
 public class CostBoundedFilterTest {
     @Test
     public void testBehavior() {
-        CostBoundedFilter filter = new CostBoundedFilter(10);
+        CostBoundedFilter filter = new CostBoundedFilter(DoubleCost.valueOf(10));
 
         assertFalse(filter.hasFilteredAnItem());
 
@@ -27,17 +26,17 @@ public class CostBoundedFilterTest {
 
         filter.apply(createNode(20));
         assertTrue(filter.hasFilteredAnItem());
-        assertEquals(filter.getMinExceedingCost(), 20.0);
+        assertEquals(filter.getMinExceedingCost(), DoubleCost.valueOf(20));
 
         filter.apply(createNode(15));
         filter.apply(createNode(100));
         filter.apply(createNode(12));
         filter.apply(createNode(16));
         assertTrue(filter.hasFilteredAnItem());
-        assertEquals(filter.getMinExceedingCost(), 12.0);
+        assertEquals(filter.getMinExceedingCost(), DoubleCost.valueOf(12));
     }
 
     private InformedSearchNode<DummySearchNode> createNode(double cost) {
-        return new InformedSearchNode<>(new DummySearchNode("", cost, 0, false), 0);
+        return new InformedSearchNode<>(new DummySearchNode("", cost, 0, false), DoubleCost.valueOf(0));
     }
 }

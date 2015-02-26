@@ -30,5 +30,5 @@ public interface Heuristic<T extends SearchNode, U> {
      * @param environment the environment
      * @return a non-overestimated estimate about the remaining cost needed before reaching a solution node
      */
-    public double estimateRemainingCost(T node, U environment);
+    public Cost estimateRemainingCost(T node, U environment);
 }

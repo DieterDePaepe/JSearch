@@ -2,6 +2,7 @@ package com.github.dieterdepaepe.jsearch.problem.npuzzle;
 
 import com.github.dieterdepaepe.jsearch.datastructure.lightweight.SingleLinkedListing;
 import com.github.dieterdepaepe.jsearch.search.statespace.SearchNode;
+import com.github.dieterdepaepe.jsearch.search.statespace.cost.IntegerCost;
 
 /**
  * Implementation of {@code SearchNode} for solving the N-Puzzle problem.
@@ -10,7 +11,7 @@ import com.github.dieterdepaepe.jsearch.search.statespace.SearchNode;
 public class PuzzleSearchNode implements SearchNode {
     private PuzzleFields puzzleFields;
     private SingleLinkedListing<Move> moves;
-    private int movesPerformed;
+    private IntegerCost movesPerformed;
     private boolean isGoal;
 
     /**
@@ -23,7 +24,7 @@ public class PuzzleSearchNode implements SearchNode {
     public PuzzleSearchNode(PuzzleFields puzzleFields, SingleLinkedListing<Move> moves, int movesPerformed, boolean isGoal) {
         this.puzzleFields = puzzleFields;
         this.moves = moves;
-        this.movesPerformed = movesPerformed;
+        this.movesPerformed = IntegerCost.valueOf(movesPerformed);
         this.isGoal = isGoal;
     }
 
@@ -36,7 +37,7 @@ public class PuzzleSearchNode implements SearchNode {
     }
 
     public int getMovesPerformed() {
-        return movesPerformed;
+        return movesPerformed.getValue();
     }
 
     @Override
@@ -45,7 +46,7 @@ public class PuzzleSearchNode implements SearchNode {
     }
 
     @Override
-    public double getCost() {
+    public IntegerCost getCost() {
         return movesPerformed;
     }
 

@@ -1,5 +1,6 @@
 package com.github.dieterdepaepe.jsearch.search.statespace.solver.idastar;
 
+import com.github.dieterdepaepe.jsearch.search.statespace.Cost;
 import com.github.dieterdepaepe.jsearch.search.statespace.InformedSearchNode;
 import com.google.common.base.Predicate;
 
@@ -9,27 +10,27 @@ import com.google.common.base.Predicate;
 * @author Dieter De Paepe
 */
 class CostBoundedFilter implements Predicate<InformedSearchNode<?>> {
-    private double maxAllowedCost;
-    private double minExceedingCost;
+    private Cost maxAllowedCost;
+    private Cost minExceedingCost;
     private boolean filteredAnItem;
 
     /**
      * Creates a new predicate which checks whether or not the cost of tested nodes is below the given bound.
-     * @param maxAllowedCost the maximum allowed cost bound
+     * @param maxAllowedCost the maximum allowed cost bound, {@code null} to allow no value
      */
-    CostBoundedFilter(double maxAllowedCost) {
+    CostBoundedFilter(Cost maxAllowedCost) {
         this.maxAllowedCost = maxAllowedCost;
-        this.minExceedingCost = Double.NaN;
+        this.minExceedingCost = null;
         this.filteredAnItem = false;
     }
 
     @Override
     public boolean apply(InformedSearchNode<?> input) {
-        double estimatedTotalCost = input.getEstimatedTotalCost();
-        if (estimatedTotalCost <= maxAllowedCost)
+        Cost estimatedTotalCost = input.getEstimatedTotalCost();
+        if (maxAllowedCost != null && estimatedTotalCost.compareTo(maxAllowedCost) <= 0)
             return true;
 
-        if (!filteredAnItem || minExceedingCost > estimatedTotalCost) {
+        if (!filteredAnItem || minExceedingCost.compareTo(estimatedTotalCost) > 0) {
             filteredAnItem = true;
             minExceedingCost = estimatedTotalCost;
         }
@@ -41,7 +42,7 @@ class CostBoundedFilter implements Predicate<InformedSearchNode<?>> {
      * valid if {@link #hasFilteredAnItem()} is {@code true}.
      * @return the lowest encountered cost which exceeded the allowed bound
      */
-    public double getMinExceedingCost() {
+    public Cost getMinExceedingCost() {
         return minExceedingCost;
     }
 

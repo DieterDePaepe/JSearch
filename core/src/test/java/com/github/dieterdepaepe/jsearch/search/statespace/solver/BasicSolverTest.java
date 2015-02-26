@@ -3,7 +3,11 @@ package com.github.dieterdepaepe.jsearch.search.statespace.solver;
 import com.github.dieterdepaepe.jsearch.problem.dummy.DummyGenerator;
 import com.github.dieterdepaepe.jsearch.problem.dummy.DummyHeuristic;
 import com.github.dieterdepaepe.jsearch.problem.dummy.DummySearchNode;
-import com.github.dieterdepaepe.jsearch.search.statespace.*;
+import com.github.dieterdepaepe.jsearch.search.statespace.SearchNode;
+import com.github.dieterdepaepe.jsearch.search.statespace.Solution;
+import com.github.dieterdepaepe.jsearch.search.statespace.Solver;
+import com.github.dieterdepaepe.jsearch.search.statespace.Solvers;
+import com.github.dieterdepaepe.jsearch.search.statespace.cost.DoubleCost;
 import com.github.dieterdepaepe.jsearch.search.statespace.util.BasicManager;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
@@ -28,7 +32,7 @@ public abstract class BasicSolverTest {
 
         DummyGenerator<DummySearchNode> generator = new DummyGenerator<>(ArrayListMultimap.<DummySearchNode, DummySearchNode>create());
         DummyHeuristic heuristic = new DummyHeuristic();
-        BasicManager<DummySearchNode> manager = new BasicManager<>();
+        BasicManager<DummySearchNode> manager = new BasicManager<>(DoubleCost.valueOf(Double.MAX_VALUE));
         Solvers.solve(solver, manager, generator, heuristic, null, Collections.<DummySearchNode>emptyList());
 
         assertNull(manager.getSolution());
@@ -41,7 +45,7 @@ public abstract class BasicSolverTest {
         ListMultimap<DummySearchNode, DummySearchNode> stateChildren = ArrayListMultimap.create();
         DummyGenerator<DummySearchNode> generator = new DummyGenerator<>(stateChildren);
         DummyHeuristic heuristic = new DummyHeuristic();
-        BasicManager<DummySearchNode> manager = new BasicManager<>();
+        BasicManager<DummySearchNode> manager = new BasicManager<>(DoubleCost.valueOf(Double.MAX_VALUE));
 
         DummySearchNode startState1 = new DummySearchNode("a", 2.0, 0, false);
         DummySearchNode startState2 = new DummySearchNode("b", 1.0, 0, false);
@@ -71,7 +75,7 @@ public abstract class BasicSolverTest {
 
         DummyGenerator<DummySearchNode> generator = new DummyGenerator<>(ArrayListMultimap.<DummySearchNode, DummySearchNode>create());
         DummyHeuristic heuristic = new DummyHeuristic();
-        BasicManager<DummySearchNode> manager = new BasicManager<>();
+        BasicManager<DummySearchNode> manager = new BasicManager<>(DoubleCost.valueOf(Double.MAX_VALUE));
 
         DummySearchNode startState1 = new DummySearchNode("a", 2.0, 0, false);
         DummySearchNode startState2 = new DummySearchNode("b", 1.0, 0, false);
@@ -102,7 +106,7 @@ public abstract class BasicSolverTest {
         Solver<SearchNode, Object> solver = getBasicTestSolver();
         DummyGenerator<DummySearchNode> generator = new DummyGenerator<>(stateChildren);
         DummyHeuristic heuristic = new DummyHeuristic();
-        BasicManager<DummySearchNode> manager = new BasicManager<>();
+        BasicManager<DummySearchNode> manager = new BasicManager<>(DoubleCost.valueOf(Double.MAX_VALUE));
 
         Solvers.solve(solver, manager, generator, heuristic, null, startState1, startState2, startState3, startState4);
         Solution<? extends DummySearchNode> solution = manager.getSolution();

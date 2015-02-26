@@ -1,5 +1,6 @@
 package com.github.dieterdepaepe.jsearch.search.statespace.solver.smastar;
 
+import com.github.dieterdepaepe.jsearch.search.statespace.Cost;
 import com.github.dieterdepaepe.jsearch.search.statespace.InformedSearchNode;
 import com.github.dieterdepaepe.jsearch.search.statespace.SearchNode;
 
@@ -17,10 +18,10 @@ class SMASearchNode<T extends SearchNode> {
     private final T searchNode;
     private final SMASearchNode<T> parent;
     private final int depth;
-    private double totalEstimatedCost;
+    private Cost totalEstimatedCost;
 
     private boolean childHasBeenPrunedInIteration;
-    private double cheapestPurgedCostInIteration;
+    private Cost cheapestPurgedCostInIteration;
 
     private Iterable<InformedSearchNode<T>> children;
     private Iterator<InformedSearchNode<T>> currentChildIterator;
@@ -33,14 +34,14 @@ class SMASearchNode<T extends SearchNode> {
      * @param depth the depth of this node
      * @param totalEstimatedCost the estimated cost
      */
-    SMASearchNode(T searchNode, SMASearchNode<T> parent, int depth, double totalEstimatedCost) {
+    SMASearchNode(T searchNode, SMASearchNode<T> parent, int depth, Cost totalEstimatedCost) {
         this.searchNode = searchNode;
         this.parent = parent;
         this.depth = depth;
         this.totalEstimatedCost = totalEstimatedCost;
 
         childHasBeenPrunedInIteration = false;
-        cheapestPurgedCostInIteration = Double.POSITIVE_INFINITY;
+        cheapestPurgedCostInIteration = CostUtil.MAX_COST;
 
         children = null;
         currentChildIterator = null;
@@ -74,7 +75,7 @@ class SMASearchNode<T extends SearchNode> {
      */
     public void resetChildIterator() {
         currentChildIterator = children.iterator();
-        cheapestPurgedCostInIteration = Double.POSITIVE_INFINITY;
+        cheapestPurgedCostInIteration = CostUtil.MAX_COST;
         childHasBeenPrunedInIteration = false;
     }
 
@@ -85,7 +86,7 @@ class SMASearchNode<T extends SearchNode> {
     public void removeChildFromMemory(SMASearchNode<T> child) {
         childrenInMemory.remove(child);
         childHasBeenPrunedInIteration = true;
-        cheapestPurgedCostInIteration = Math.min(
+        cheapestPurgedCostInIteration = CostUtil.COST_COMPARATOR.min(
                 getCheapestPurgedCostInIteration(),
                 child.getTotalEstimatedCost()
         );
@@ -110,11 +111,11 @@ class SMASearchNode<T extends SearchNode> {
         return depth;
     }
 
-    public double getTotalEstimatedCost() {
+    public Cost getTotalEstimatedCost() {
         return totalEstimatedCost;
     }
 
-    public double getCheapestPurgedCostInIteration() {
+    public Cost getCheapestPurgedCostInIteration() {
         return cheapestPurgedCostInIteration;
     }
 
@@ -130,7 +131,7 @@ class SMASearchNode<T extends SearchNode> {
         return currentChildIterator;
     }
 
-    public void setTotalEstimatedCost(double totalEstimatedCost) {
+    public void setTotalEstimatedCost(Cost totalEstimatedCost) {
         this.totalEstimatedCost = totalEstimatedCost;
     }
 

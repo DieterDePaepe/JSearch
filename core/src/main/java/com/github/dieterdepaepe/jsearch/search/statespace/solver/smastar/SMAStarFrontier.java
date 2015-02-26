@@ -1,6 +1,8 @@
 package com.github.dieterdepaepe.jsearch.search.statespace.solver.smastar;
 
+import com.github.dieterdepaepe.jsearch.search.statespace.Cost;
 import com.github.dieterdepaepe.jsearch.search.statespace.SearchNode;
+import com.google.common.collect.ComparisonChain;
 
 import java.util.*;
 
@@ -88,20 +90,20 @@ class SMAStarFrontier<T extends SearchNode> {
      * increasing cost as primary key and decreasing depth as secondary key.
      */
     private static class CostAndDepth implements Comparable<CostAndDepth> {
-        private final double cost;
+        private final Cost cost;
         private final int depth;
 
-        private CostAndDepth(double cost, int depth) {
+        private CostAndDepth(Cost cost, int depth) {
             this.cost = cost;
             this.depth = depth;
         }
 
         @Override
         public int compareTo(CostAndDepth o) {
-            if (this.cost != o.cost)
-                return Double.compare(this.cost, o.cost);
-            else
-                return -Integer.compare(this.depth, o.depth);
+            return ComparisonChain.start()
+                    .compare(this.cost, o.cost, CostUtil.COST_COMPARATOR)
+                    .compare(o.depth, this.depth)
+                    .result();
         }
 
         @Override

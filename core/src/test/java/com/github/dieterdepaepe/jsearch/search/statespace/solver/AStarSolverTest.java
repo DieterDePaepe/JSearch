@@ -1,11 +1,12 @@
 package com.github.dieterdepaepe.jsearch.search.statespace.solver;
 
-import static org.testng.Assert.*;
-
 import com.github.dieterdepaepe.jsearch.problem.dummy.DummyGenerator;
 import com.github.dieterdepaepe.jsearch.problem.dummy.DummyHeuristic;
 import com.github.dieterdepaepe.jsearch.problem.dummy.DummySearchNode;
-import com.github.dieterdepaepe.jsearch.search.statespace.*;
+import com.github.dieterdepaepe.jsearch.search.statespace.SearchNode;
+import com.github.dieterdepaepe.jsearch.search.statespace.Solver;
+import com.github.dieterdepaepe.jsearch.search.statespace.Solvers;
+import com.github.dieterdepaepe.jsearch.search.statespace.cost.DoubleCost;
 import com.github.dieterdepaepe.jsearch.search.statespace.dev.LoggingGenerator;
 import com.github.dieterdepaepe.jsearch.search.statespace.util.BasicManager;
 import com.google.common.collect.ArrayListMultimap;
@@ -13,6 +14,9 @@ import com.google.common.collect.ListMultimap;
 import org.testng.annotations.Test;
 
 import java.util.Arrays;
+
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 /**
  * Testing class for {@link com.github.dieterdepaepe.jsearch.search.statespace.solver.AStarSolver}.
@@ -54,7 +58,7 @@ public class AStarSolverTest extends BasicSolverTest {
 
         LoggingGenerator<DummySearchNode, Object> generator = new LoggingGenerator<>(new DummyGenerator<>(successors));
         DummyHeuristic heuristic = new DummyHeuristic();
-        BasicManager<DummySearchNode> manager = new BasicManager<>();
+        BasicManager<DummySearchNode> manager = new BasicManager<>(DoubleCost.valueOf(Double.MAX_VALUE));
         AStarSolver solver = new AStarSolver();
 
         Solvers.solve(solver, manager, generator, heuristic, null, a);

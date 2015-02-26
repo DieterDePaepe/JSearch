@@ -4,6 +4,7 @@ import com.github.dieterdepaepe.jsearch.problem.dummy.DummyGenerator;
 import com.github.dieterdepaepe.jsearch.problem.dummy.DummyHeuristic;
 import com.github.dieterdepaepe.jsearch.problem.dummy.DummySearchNode;
 import com.github.dieterdepaepe.jsearch.search.statespace.*;
+import com.github.dieterdepaepe.jsearch.search.statespace.cost.DoubleCost;
 import com.github.dieterdepaepe.jsearch.search.statespace.dev.LoggingGenerator;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
@@ -91,8 +92,8 @@ public class DepthFirstSolverTest extends BasicSolverTest {
         }
 
         @Override
-        public double getCostBound() {
-            return Double.POSITIVE_INFINITY;
+        public Cost getCostBound() {
+            return DoubleCost.valueOf(Double.POSITIVE_INFINITY);
         }
     }
 }

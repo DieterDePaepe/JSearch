@@ -1,6 +1,8 @@
 package com.github.dieterdepaepe.jsearch.problem.dummy;
 
+import com.github.dieterdepaepe.jsearch.search.statespace.Cost;
 import com.github.dieterdepaepe.jsearch.search.statespace.SearchNode;
+import com.github.dieterdepaepe.jsearch.search.statespace.cost.DoubleCost;
 
 /**
  * Implementation of a {@code SearchNode} for an entirely predefined problem.
@@ -9,8 +11,8 @@ import com.github.dieterdepaepe.jsearch.search.statespace.SearchNode;
 public class DummySearchNode implements SearchNode{
     private String name;
     private boolean isGoal;
-    private double cost;
-    private double heuristicValue;
+    private Cost cost;
+    private Cost heuristicValue;
     private Object searchStateIdentifier;
 
     /**
@@ -24,8 +26,8 @@ public class DummySearchNode implements SearchNode{
     public DummySearchNode(String name, double cost, double heuristicValue, boolean isGoal, Object searchStateIdentifier) {
         this.name = name;
         this.isGoal = isGoal;
-        this.cost = cost;
-        this.heuristicValue = heuristicValue;
+        this.cost = DoubleCost.valueOf(cost);
+        this.heuristicValue = DoubleCost.valueOf(heuristicValue);
         this.searchStateIdentifier = searchStateIdentifier;
     }
 
@@ -46,7 +48,7 @@ public class DummySearchNode implements SearchNode{
     }
 
     @Override
-    public double getCost() {
+    public Cost getCost() {
         return cost;
     }
 
@@ -55,7 +57,7 @@ public class DummySearchNode implements SearchNode{
         return searchStateIdentifier == null ? this : searchStateIdentifier;
     }
 
-    public double getHeuristicValue() {
+    public Cost getHeuristicValue() {
         return heuristicValue;
     }
 

@@ -34,7 +34,7 @@ public class IDAStarSolver implements Solver<SearchNode, Object> {
                                                 SearchNodeGenerator<S, E> searchNodeGenerator,
                                                 Manager<? super S> manager) {
         boolean searchSpaceExhausted = false;
-        double costBound = Double.NEGATIVE_INFINITY;
+        Cost costBound = null;
 
         DepthFirstSolver depthFirstSolver = new DepthFirstSolver();
 
@@ -49,7 +49,7 @@ public class IDAStarSolver implements Solver<SearchNode, Object> {
             );
             if (filter.hasFilteredAnItem()) {
                 costBound = filter.getMinExceedingCost();
-                if (costBound > manager.getCostBound())
+                if (costBound.compareTo(manager.getCostBound()) > 0)
                     searchSpaceExhausted = true;
             } else {
                 searchSpaceExhausted = true;

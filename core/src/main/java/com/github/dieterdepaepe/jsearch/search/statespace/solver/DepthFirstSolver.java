@@ -3,7 +3,9 @@ package com.github.dieterdepaepe.jsearch.search.statespace.solver;
 import com.github.dieterdepaepe.jsearch.search.statespace.*;
 import com.github.dieterdepaepe.jsearch.search.statespace.util.BasicSolution;
 
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.Iterator;
 
 /**
  * A {@link com.github.dieterdepaepe.jsearch.search.statespace.Solver} implementation that will examine the state space
@@ -32,7 +34,7 @@ public class DepthFirstSolver implements Solver<SearchNode, Object> {
         Deque<Iterator<InformedSearchNode<S>>> nodesStack = new ArrayDeque<>();
 
         S bestGoalNode = null;
-        double bestGoalNodeCost = Double.POSITIVE_INFINITY;
+        Cost bestGoalNodeCost = manager.getCostBound();
 
         nodesStack.addFirst(startNodes.iterator());
 
@@ -48,12 +50,12 @@ public class DepthFirstSolver implements Solver<SearchNode, Object> {
             InformedSearchNode<S> informedNodeToExpand = activeIterator.next();
 
             // Don't expand node if it surpasses the cost boundary
-            if (informedNodeToExpand.getEstimatedTotalCost() > manager.getCostBound())
+            if (informedNodeToExpand.getEstimatedTotalCost().compareTo(manager.getCostBound()) > 0)
                 continue;
 
             S searchNode = informedNodeToExpand.getSearchNode();
             if (searchNode.isGoal()) {
-                if (searchNode.getCost() < bestGoalNodeCost || bestGoalNode == null) {
+                if (searchNode.getCost().compareTo(bestGoalNodeCost) < 0 || bestGoalNode == null) {
                     bestGoalNode = searchNode;
                     bestGoalNodeCost = searchNode.getCost();
                 }

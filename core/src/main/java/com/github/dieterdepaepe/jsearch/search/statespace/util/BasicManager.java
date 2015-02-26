@@ -1,5 +1,6 @@
 package com.github.dieterdepaepe.jsearch.search.statespace.util;
 
+import com.github.dieterdepaepe.jsearch.search.statespace.Cost;
 import com.github.dieterdepaepe.jsearch.search.statespace.Manager;
 import com.github.dieterdepaepe.jsearch.search.statespace.SearchNode;
 import com.github.dieterdepaepe.jsearch.search.statespace.Solution;
@@ -14,14 +15,11 @@ import com.github.dieterdepaepe.jsearch.search.statespace.Solution;
  */
 public class BasicManager<T extends SearchNode> implements Manager<T> {
     private Solution<? extends T> bestSolutionSoFar;
-    private double costBound;
+    private Cost costBound;
 
-    public BasicManager(double costBound) {
+    public BasicManager(Cost costBound) {
         this.costBound = costBound;
-    }
-
-    public BasicManager() {
-        this(Double.POSITIVE_INFINITY);
+        this.bestSolutionSoFar = null;
     }
 
     public Solution<? extends T> getSolution() {
@@ -35,14 +33,22 @@ public class BasicManager<T extends SearchNode> implements Manager<T> {
 
     @Override
     public void registerSolution(Solution<? extends T> solution) {
-        if (bestSolutionSoFar == null || solution.isOptimal() || solution.getNode().getCost() < costBound) {
+        Cost solutionCost = solution.getNode().getCost();
+        int comparison = solutionCost.compareTo(costBound);
+
+        if (comparison > 0)
+            return;
+
+        if (comparison < 0
+                || bestSolutionSoFar == null
+                || (solution.isOptimal() && !bestSolutionSoFar.isOptimal())) {
             bestSolutionSoFar = solution;
             costBound = solution.getNode().getCost();
         }
     }
 
     @Override
-    public double getCostBound() {
+    public Cost getCostBound() {
         return costBound;
     }
 }

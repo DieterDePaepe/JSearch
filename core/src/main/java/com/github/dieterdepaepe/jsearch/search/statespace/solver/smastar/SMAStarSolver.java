@@ -12,13 +12,12 @@ import static com.google.common.base.Preconditions.checkArgument;
  * the number of expanded nodes like {@code A*} while using limited memory. It will find
  * the optimal {@link com.github.dieterdepaepe.jsearch.search.statespace.Solution} that is reachable using the
  * restricted memory. This solution will be marked as optimal if it can be guaranteed no cheaper solutions existed
- * outside the memory bounded search space. This solver will not find any solutions that have a cost of
- * {@code POSITIVE_INFINITY}.
+ * outside the memory bounded search space.
  * <p/>
  * <b>Important: </b> This solver assumes a correct implementation of the
  * {@link com.github.dieterdepaepe.jsearch.search.statespace.SearchNode#equals(Object)} to recognise identical states
  * when regenerating discarded children for a certain node. If the {@code Iterable}s returned by the
- * {@link com.github.dieterdepaepe.jsearch.search.statespace.SearchNodeGenerator} don't create new objects for each
+ * {@link com.github.dieterdepaepe.jsearch.search.statespace.SearchNodeGenerator} doesn't create new objects for each
  * iteration (such as is the case for collections), the default {@link Object#equals(Object)}
  * implementation will suffice.
  * <p/>
@@ -56,7 +55,7 @@ public class SMAStarSolver implements Solver<SearchNode, Object> {
         SMAStarFrontier<S> frontier = new SMAStarFrontier<>();
         BoundaryNodeCostTracker boundaryNodeCostTracker = new BoundaryNodeCostTracker();
 
-        SMASearchNode<S> smaRootNode = new SMASearchNode<>(null, null, 0, Double.NEGATIVE_INFINITY);
+        SMASearchNode<S> smaRootNode = new SMASearchNode<>(null, null, 0, CostUtil.MIN_COST);
         smaRootNode.initialiseChildren(startNodes);
         if (!smaRootNode.getCurrentChildIterator().hasNext())
             return;
@@ -70,14 +69,14 @@ public class SMAStarSolver implements Solver<SearchNode, Object> {
         while (manager.continueSearch()) {
             SMASearchNode<S> cheapestNode = frontier.getDeepestLeastCostNode();
 
-            if (cheapestNode.getTotalEstimatedCost() > manager.getCostBound())
+            if (CostUtil.COST_COMPARATOR.compare(cheapestNode.getTotalEstimatedCost(), manager.getCostBound()) > 0)
                 return;
 
-            if (cheapestNode.getTotalEstimatedCost() == Double.POSITIVE_INFINITY)
+            if (cheapestNode.getTotalEstimatedCost() == CostUtil.MAX_COST)
                 return;
 
             if (cheapestNode.getSearchNode() != null && cheapestNode.getSearchNode().isGoal()) {
-                boolean isOptimal = cheapestNode.getTotalEstimatedCost() <= boundaryNodeCostTracker.getMinimumBoundaryCost();
+                boolean isOptimal = CostUtil.COST_COMPARATOR.compare(cheapestNode.getTotalEstimatedCost(), boundaryNodeCostTracker.getMinimumBoundaryCost()) <= 0;
                 manager.registerSolution(new BasicSolution<>(cheapestNode.getSearchNode(), isOptimal));
                 return;
             }
@@ -102,7 +101,7 @@ public class SMAStarSolver implements Solver<SearchNode, Object> {
                 }
             } else {
                 frontier.removeNode(cheapestNode);
-                cheapestNode.setTotalEstimatedCost(Double.POSITIVE_INFINITY);
+                cheapestNode.setTotalEstimatedCost(CostUtil.MAX_COST);
                 frontier.addNode(cheapestNode);
             }
         }
@@ -171,9 +170,9 @@ public class SMAStarSolver implements Solver<SearchNode, Object> {
         if (node.getCurrentChildIterator().hasNext())
             return;
 
-        double newCostEstimate = node.getCheapestPurgedCostInIteration();
+        Cost newCostEstimate = node.getCheapestPurgedCostInIteration();
         for (SMASearchNode<T> child : node.getChildrenInMemory()) {
-            newCostEstimate = Math.min(newCostEstimate, child.getTotalEstimatedCost());
+            newCostEstimate = CostUtil.COST_COMPARATOR.min(newCostEstimate, child.getTotalEstimatedCost());
         }
 
         if (newCostEstimate == node.getTotalEstimatedCost())
@@ -198,12 +197,12 @@ public class SMAStarSolver implements Solver<SearchNode, Object> {
      */
     private <T extends SearchNode> SMASearchNode<T> makeSMASearchNode(InformedSearchNode<T> node, SMASearchNode<T> parent, BoundaryNodeCostTracker boundaryNodeCostTracker) {
         int childDepth = parent.getDepth() + 1;
-        double childCost;
+        Cost childCost;
         if (childDepth >= maxSearchNodesUsed && !node.getSearchNode().isGoal()) {
-            childCost = Double.POSITIVE_INFINITY;
+            childCost = CostUtil.MAX_COST;
             boundaryNodeCostTracker.update(node.getEstimatedTotalCost());
         } else {
-            childCost = Math.max(node.getEstimatedTotalCost(), parent.getTotalEstimatedCost());
+            childCost = CostUtil.COST_COMPARATOR.max(node.getEstimatedTotalCost(), parent.getTotalEstimatedCost());
         }
         return new SMASearchNode<>(node.getSearchNode(), parent, childDepth, childCost);
     }
@@ -213,13 +212,13 @@ public class SMAStarSolver implements Solver<SearchNode, Object> {
      * due to it's depth being too large to fit all predecessors in memory.
      */
     private static class BoundaryNodeCostTracker {
-        private double minimumBoundaryCost = Double.POSITIVE_INFINITY;
+        private Cost minimumBoundaryCost = CostUtil.MAX_COST;
 
-        void update(double costOfBoundaryNode) {
-            minimumBoundaryCost = Math.min(minimumBoundaryCost, costOfBoundaryNode);
+        void update(Cost costOfBoundaryNode) {
+            minimumBoundaryCost = CostUtil.COST_COMPARATOR.min(minimumBoundaryCost, costOfBoundaryNode);
         }
 
-        double getMinimumBoundaryCost() {
+        Cost getMinimumBoundaryCost() {
             return minimumBoundaryCost;
         }
     }

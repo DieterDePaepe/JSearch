@@ -4,6 +4,7 @@ import com.github.dieterdepaepe.jsearch.datastructure.lightweight.SingleLinkedLi
 import com.github.dieterdepaepe.jsearch.search.statespace.Solution;
 import com.github.dieterdepaepe.jsearch.search.statespace.Solver;
 import com.github.dieterdepaepe.jsearch.search.statespace.Solvers;
+import com.github.dieterdepaepe.jsearch.search.statespace.cost.DoubleCost;
 import com.github.dieterdepaepe.jsearch.search.statespace.solver.AStarSolver;
 import com.github.dieterdepaepe.jsearch.search.statespace.util.BasicManager;
 
@@ -29,7 +30,7 @@ public class Example {
 
         //We can use any solver, except for the DepthFirstSolver, because we have an infinite depth search space
         Solver<? super PuzzleSearchNode, ? super PuzzleEnvironment> solver = new AStarSolver();
-        BasicManager<PuzzleSearchNode> manager = new BasicManager<>();
+        BasicManager<PuzzleSearchNode> manager = new BasicManager<>(DoubleCost.valueOf(Double.POSITIVE_INFINITY));
         PuzzleEnvironment environment = new PuzzleEnvironment(puzzle, targetFieldState);
         ManhattanDistance heuristic = new ManhattanDistance();
         PuzzleSearchNodeGenerator nodeGenerator = new PuzzleSearchNodeGenerator();

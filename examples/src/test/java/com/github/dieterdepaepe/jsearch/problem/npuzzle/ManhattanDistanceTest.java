@@ -1,8 +1,10 @@
 package com.github.dieterdepaepe.jsearch.problem.npuzzle;
 
 
-import static org.testng.Assert.*;
+import com.github.dieterdepaepe.jsearch.search.statespace.cost.IntegerCost;
 import org.testng.annotations.Test;
+
+import static org.testng.Assert.assertEquals;
 
 /**
  * Test class for {@code ManhattanDistance} class.
@@ -26,7 +28,7 @@ public class ManhattanDistanceTest {
         PuzzleEnvironment environment = new PuzzleEnvironment(puzzle, targetFields);
         PuzzleSearchNode node = new PuzzleSearchNode(testFields, null, 0, false);
 
-        assertEquals(heuristic.estimateRemainingCost(node, environment), 14.0);
+        assertEquals(heuristic.estimateRemainingCost(node, environment), IntegerCost.valueOf(14));
     }
 
     @Test
@@ -40,6 +42,6 @@ public class ManhattanDistanceTest {
         PuzzleEnvironment environment = new PuzzleEnvironment(puzzle, targetFields);
         PuzzleSearchNode node = new PuzzleSearchNode(testFields, null, 0, false);
 
-        assertEquals(heuristic.estimateRemainingCost(node, environment), 1.0);
+        assertEquals(heuristic.estimateRemainingCost(node, environment), IntegerCost.valueOf(1));
     }
 }
