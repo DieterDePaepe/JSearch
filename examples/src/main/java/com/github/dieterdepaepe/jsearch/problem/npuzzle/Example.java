@@ -1,6 +1,5 @@
 package com.github.dieterdepaepe.jsearch.problem.npuzzle;
 
-import com.github.dieterdepaepe.jsearch.datastructure.lightweight.SingleLinkedListing;
 import com.github.dieterdepaepe.jsearch.search.statespace.Solution;
 import com.github.dieterdepaepe.jsearch.search.statespace.Solver;
 import com.github.dieterdepaepe.jsearch.search.statespace.Solvers;
@@ -47,7 +46,7 @@ public class Example {
         if (solution == null) {
             System.out.println("Unable to find a solution.");
         } else {
-            List<Move> solutionMoves = SingleLinkedListing.toList(solution.getNode().getMoves(), false);
+            List<Move> solutionMoves = solution.getNode().getMoves().toList();
             System.out.printf("Found %s solution consisting of %d steps: %s\n\n", solution.isOptimal() ? "an optimal" : "a non-optimal", solutionMoves.size(), solutionMoves);
 
             if (!printIntermediateSteps)

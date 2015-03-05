@@ -28,7 +28,7 @@ public class PuzzleSearchNodeGenerator implements SearchNodeGenerator<PuzzleSear
             //Construct the new search node by adding one extra move
             PuzzleSearchNode newNode = new PuzzleSearchNode(
                     movedFieldsState,
-                    new SingleLinkedListing<>(node.getMoves(), move),
+                    node.getMoves().extend(move),
                     node.getMovesPerformed() + 1,
                     environment.getTargetState().equals(movedFieldsState));
 
@@ -40,6 +40,6 @@ public class PuzzleSearchNodeGenerator implements SearchNodeGenerator<PuzzleSear
     }
 
     public PuzzleSearchNode createStartState(PuzzleFields fieldState, PuzzleEnvironment environment) {
-        return new PuzzleSearchNode(fieldState, null, 0, environment.getTargetState().equals(fieldState));
+        return new PuzzleSearchNode(fieldState, SingleLinkedListing.<Move>of(), 0, environment.getTargetState().equals(fieldState));
     }
 }
