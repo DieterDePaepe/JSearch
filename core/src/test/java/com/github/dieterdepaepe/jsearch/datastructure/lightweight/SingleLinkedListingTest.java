@@ -30,6 +30,11 @@ public class SingleLinkedListingTest {
         assertEquals(listing.toList(), Lists.newArrayList("A", "B", "C"));
         assertEquals(listing.toInverseList(), Lists.newArrayList("C", "B", "A"));
         assertTrue(Iterables.elementsEqual(listing.fromEndToStart(), Lists.newArrayList("C", "B", "A")));
+
+        listing = SingleLinkedListing.of(Lists.newArrayList("A", "B", "C"));
+        assertEquals(listing.toList(), Lists.newArrayList("A", "B", "C"));
+        assertEquals(listing.toInverseList(), Lists.newArrayList("C", "B", "A"));
+        assertTrue(Iterables.elementsEqual(listing.fromEndToStart(), Lists.newArrayList("C", "B", "A")));
     }
 
     @Test
@@ -138,9 +143,7 @@ public class SingleLinkedListingTest {
 
             EqualWrapper that = (EqualWrapper) o;
 
-            if (identity != null ? !identity.equals(that.identity) : that.identity != null) return false;
-
-            return true;
+            return !(identity != null ? !identity.equals(that.identity) : that.identity != null);
         }
 
         @Override

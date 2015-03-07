@@ -209,6 +209,17 @@ public class SingleLinkedListing<T> {
         return listing.extend(element, others);
     }
 
+    /**
+     * Creates a new listing of the specified elements.
+     * @param elements the elements
+     * @param <T> the type of the listing
+     * @return a listing of the specified elements
+     */
+    public static <T> SingleLinkedListing<T> of(Iterable<T> elements) {
+        SingleLinkedListing<T> listing = of();
+        return listing.extend(elements);
+    }
+
     private class LinkIterable implements Iterable<T> {
         @Override
         public Iterator<T> iterator() {
