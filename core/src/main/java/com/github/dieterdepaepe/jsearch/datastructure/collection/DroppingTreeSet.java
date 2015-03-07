@@ -18,7 +18,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * another element.
  *
  * <p>This implementation provides guaranteed log(n) time cost for the basic
- * operations ({@code add}, {@code remove} and {@code contains}).
+ * operations ({@code add}, {@code remove} and {@code contains}).</p>
  *
  * <p>Note that the ordering maintained by a set (whether or not an explicit
  * comparator is provided) must be <i>consistent with equals</i> if it is to
@@ -30,12 +30,12 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * {@code compare}) method, so two elements that are deemed equal by this method
  * are, from the standpoint of the set, equal.  The behavior of a set
  * <i>is</i> well-defined even if its ordering is inconsistent with equals; it
- * just fails to obey the general contract of the {@code Set} interface.
+ * just fails to obey the general contract of the {@code Set} interface.</p>
  *
  * <p><strong>Note that this implementation is not synchronized.</strong>
  * If multiple threads access the set concurrently, and at least one
  * of the threads modifies the set, it <i>must</i> be synchronized
- * externally.
+ * externally.</p>
  *
  * <p>The iterators returned by this class's {@code iterator} method are
  * <i>fail-fast</i>: if the set is modified at any time after the iterator is
@@ -43,7 +43,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * method, the iterator will throw a {@link ConcurrentModificationException}.
  * Thus, in the face of concurrent modification, the iterator fails quickly
  * and cleanly, rather than risking arbitrary, non-deterministic behavior at
- * an undetermined time in the future.
+ * an undetermined time in the future.</p>
  *
  * <p>Note that the fail-fast behavior of an iterator cannot be guaranteed
  * as it is, generally speaking, impossible to make any hard guarantees in the
@@ -51,7 +51,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * throw {@code ConcurrentModificationException} on a best-effort basis.
  * Therefore, it would be wrong to write a program that depended on this
  * exception for its correctness:   <i>the fail-fast behavior of iterators
- * should be used only to detect bugs.</i>
+ * should be used only to detect bugs.</i></p>
  *
  * @param <E> the type of elements maintained by this set
  * @author Dieter De Paepe

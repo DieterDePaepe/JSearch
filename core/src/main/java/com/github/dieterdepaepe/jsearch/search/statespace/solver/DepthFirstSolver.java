@@ -11,17 +11,17 @@ import java.util.Iterator;
  * A {@link com.github.dieterdepaepe.jsearch.search.statespace.Solver} implementation that will examine the state space
  * in a depth first way. It may find multiple solutions along the way and will return an optimal solution when the state
  * space has been completely explored.
- * <p/>
- * Nodes will be expanded in the order they are provided by the generator. Because of the limited number of nodes
+ *
+ * <p>Nodes will be expanded in the order they are provided by the generator. Because of the limited number of nodes
  * in scope during search, this solver has a very low memory footprint. The depth first expansion makes this solver
  * unsuited for for infinite depth tree or graph-like state space, because the solver could endlessly
  * wander around the state space without encountering a solution. This problem can be somewhat remedied by defining a
- * maximum depth in the generator, but this is only possible if a maximum solution depth is known beforehand.
- * <p/>
- * This solver will not use the {@link com.github.dieterdepaepe.jsearch.search.statespace.SearchNode#getSearchSpaceState()}
- * information.
- * <p/>
- * This implementation is stateless and therefor thread-safe.
+ * maximum depth in the generator, but this is only possible if a maximum solution depth is known beforehand.</p>
+ *
+ * <p>This solver will not use the
+ * {@link com.github.dieterdepaepe.jsearch.search.statespace.SearchNode#getSearchSpaceState()} information.</p>
+ *
+ * <p>This implementation is stateless and therefor thread-safe.</p>
  * @author Dieter De Paepe
  */
 public class DepthFirstSolver implements Solver<SearchNode, Object> {

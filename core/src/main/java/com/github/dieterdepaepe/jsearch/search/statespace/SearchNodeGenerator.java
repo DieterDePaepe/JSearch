@@ -15,9 +15,9 @@ package com.github.dieterdepaepe.jsearch.search.statespace;
  * which we call the <strong>environment</strong>. The environment is shared between all {@code SearchNode}s during
  * a search and should therefor not contain any changing data (this is of course limited to exposed data -
  * the environment is an ideal location to place caches).
- * <p>
- * All other data is limited to one or a limited number of nodes, and should be stored in the
- * <strong>{@code SearchNode}</strong> implementation.
+ *
+ * <p>All other data is limited to one or a limited number of nodes, and should be stored in the
+ * <strong>{@code SearchNode}</strong> implementation.</p>
  *
  * <h2>Implementation note:</h2>
  * A state space can be represented as a directed graph. It is advisable to design the {@code SearchNode} and

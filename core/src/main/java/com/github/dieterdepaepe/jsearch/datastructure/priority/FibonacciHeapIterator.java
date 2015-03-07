@@ -8,6 +8,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * An {@code Iterator} which iterates all entries in a {@code FibonacciHeap}.
+ *
  * @author Dieter De Paepe
  */
 class FibonacciHeapIterator<K, V> implements Iterator<FibonacciHeapEntry<K, V>> {

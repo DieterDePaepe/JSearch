@@ -12,24 +12,24 @@ import java.util.*;
  * Recursive best-first search: An adaptation of the <a href="http://en.wikipedia.org/wiki/A*">A*</a> algorithm which
  * uses linear memory. This {@link com.github.dieterdepaepe.jsearch.search.statespace.Solver} will always find a
  * single solution if one is reachable, and it will be guaranteed to be optimal.
- * <p/>
- * Recursive best-first search expands nodes in a best-first order, but uses recursion rather than a priority heap
+ *
+ * <p>Recursive best-first search expands nodes in a best-first order, but uses recursion rather than a priority heap
  * to track the nodes to be expanded. This means nodes will be visited and expanded multiple times to reconstruct
  * paths to previously visited search nodes. Specifically: each time a new node is to be expanded for the first time,
  * the search tree will be pruned up to the children of the common ancestor of the current node and the node to be
  * expanded. Then the search tree starting at the proper child will be reconstructed until the next best-cost node is
- * encountered. Because of this, performance depends greatly on the structure of the search tree.
- * <p/>
- * This solver does not use the {@link com.github.dieterdepaepe.jsearch.search.statespace.SearchNode#getSearchSpaceState()}
- * information.
- * <p/>
- * This solver assumes an admissible {@code Heuristic}. Should this assumption be violated, and the heuristic
+ * encountered. Because of this, performance depends greatly on the structure of the search tree.</p>
+ *
+ * <p>This solver does not use the {@link com.github.dieterdepaepe.jsearch.search.statespace.SearchNode#getSearchSpaceState()}
+ * information.</p>
+ *
+ * <p>This solver assumes an admissible {@code Heuristic}. Should this assumption be violated, and the heuristic
  * overestimates the remaining cost by a factor of {@code e (> 0)}, the found solution is still guaranteed to be at most
  * <tt>(1 + e)</tt> times more expensive than the actual optimal solution. This technique may be used to speed up
  * the search by decreasing the number of visited nodes. Note however that the found
- * solution will still indicate optimality, since the solver assumes an admissible heuristic.
- * <p/>
- * This implementation is stateless and therefor thread-safe.
+ * solution will still indicate optimality, since the solver assumes an admissible heuristic.</p>
+ *
+ * <p>This implementation is stateless and therefor thread-safe.</p>
  * @author Dieter De Paepe
  */
 public class RBFSSolver implements Solver<SearchNode, Object> {

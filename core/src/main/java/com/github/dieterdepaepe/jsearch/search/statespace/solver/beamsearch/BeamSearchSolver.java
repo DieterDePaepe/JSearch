@@ -13,15 +13,16 @@ import java.util.List;
  * Implementation of <a href="http://en.wikipedia.org/wiki/Beam_search">beam search</a>. Beam search can be made to
  * work with limited memory. Beam search may find multiple {@link Solution}s during search, but is not guaranteed to
  * find an optimal (or even any) solution during its search.
- * <p/>
- * Beam search works in iterations. In each iteration, a number of search nodes are selected by a {@link ParentSelector}
- * to generate the search nodes for the next iteration. All generated nodes are examined to see if they are a goal
- * node or not. The search will continue until the search space is exhausted or until instructed by the {@link Manager}.
- * <p/>
- * The solver can use the {@link SearchNode#getSearchSpaceState()} information depending on the {@code ParentSelector}
- * chosen.
- * <p/>
- * This implementation is thread-safe if the used {@code ParentSelector} is.
+ *
+ * <p>Beam search works in iterations. In each iteration, a number of search nodes are selected by a
+ * {@link ParentSelector} to generate the search nodes for the next iteration. All generated nodes are examined to
+ * see if they are a goal node or not. The search will continue until the search space is exhausted or until
+ * instructed by the {@link Manager}.</p>
+ *
+ * <p>The solver can use the {@link SearchNode#getSearchSpaceState()} information depending on the
+ * {@code ParentSelector} chosen.</p>
+ *
+ * <p>This implementation is thread-safe if the used {@code ParentSelector} is.</p>
  * @author Dieter De Paepe
  */
 public class BeamSearchSolver<U extends SearchNode, V> implements Solver<U, V> {

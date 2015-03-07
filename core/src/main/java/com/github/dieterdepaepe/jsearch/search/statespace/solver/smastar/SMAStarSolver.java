@@ -13,23 +13,23 @@ import static com.google.common.base.Preconditions.checkArgument;
  * the optimal {@link com.github.dieterdepaepe.jsearch.search.statespace.Solution} that is reachable using the
  * restricted memory. This solution will be marked as optimal if it can be guaranteed no cheaper solutions existed
  * outside the memory bounded search space.
- * <p/>
- * <b>Important: </b> This solver assumes a correct implementation of the
+ *
+ * <p><b>Important: </b> This solver assumes a correct implementation of the
  * {@link com.github.dieterdepaepe.jsearch.search.statespace.SearchNode#equals(Object)} to recognise identical states
  * when regenerating discarded children for a certain node. If the {@code Iterable}s returned by the
  * {@link com.github.dieterdepaepe.jsearch.search.statespace.SearchNodeGenerator} doesn't create new objects for each
  * iteration (such as is the case for collections), the default {@link Object#equals(Object)}
- * implementation will suffice.
- * <p/>
- * This solver does not use the {@link com.github.dieterdepaepe.jsearch.search.statespace.SearchNode#getSearchSpaceState()}
- * information.
- * <p/>
- * During a search, the solver keeps a maximum number of {@link com.github.dieterdepaepe.jsearch.search.statespace.SearchNode}s
+ * implementation will suffice.</p>
+ *
+ * <p>This solver does not use the {@link com.github.dieterdepaepe.jsearch.search.statespace.SearchNode#getSearchSpaceState()}
+ * information.</p>
+ *
+ * <p>During a search, the solver keeps a maximum number of {@link com.github.dieterdepaepe.jsearch.search.statespace.SearchNode}s
  * in memory. Each expanded node in memory will also track the {@code Iterable} produced by the corresponding
  * {@code SearchNodeGenerator}. Because of this, memory can be saved by having the {@code SearchNodeGenerator}
- * return generating {@code Iterable}s rather than collections.
- * <p/>
- * This implementation is thread-safe.
+ * return generating {@code Iterable}s rather than collections.</p>
+ *
+ * <p>This implementation is thread-safe.</p>
  * @author Dieter De Paepe
  */
 public class SMAStarSolver implements Solver<SearchNode, Object> {

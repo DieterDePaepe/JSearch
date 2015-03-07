@@ -7,22 +7,22 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * A wrapper around another {@code Solver} which adds <i>iterative deepening</i> to the search process.
- * <p/>
- * A search will happen in multiple iterations with an increasing depth. In iteration, the search space is limited to
+ *
+ * <p>A search will happen in multiple iterations with an increasing depth. In iteration, the search space is limited to
  * nodes whose depth value is smaller than or equal to this depth. A complete search is conducted in each iteration by
  * the wrapped {@code Solver}. This means that a registered "optimal" solution may not be optimal at all, but instead be
  * optimal for the depth-limited search space. Search continues until the {@code Manager} discontinues it or when
- * increasing the search depth would not add any extra search nodes to the search space.
- * <p/>
- * Iterative deepening can be used with any {@code Solver}, but is commonly used in combination with depth first search
+ * increasing the search depth would not add any extra search nodes to the search space.</p>
+ *
+ * <p>Iterative deepening can be used with any {@code Solver}, but is commonly used in combination with depth first search
  * (see {@link com.github.dieterdepaepe.jsearch.search.statespace.solver.DepthFirstSolver}) to form
  * <a href="http://en.wikipedia.org/wiki/Iterative_deepening_depth-first_search">iterative deepening depth
  * first search (IDDFS)</a>. This has several advantages: it enables the use of depth first search in unbounded search
  * spaces, it functions like breadth-first-search and is very memory efficient. There is an overhead due to
  * the revisiting of search nodes, but this is typically a small factor, especially for search spaces with a
- * high branching factor.
- * <p/>
- * This class is thread-safe if the wrapped {@code Solver} is.
+ * high branching factor.</p>
+ *
+ * <p>This class is thread-safe if the wrapped {@code Solver} is.</p>
  * @author Dieter De Paepe
  */
 public class IterativeDeepeningSolver<U extends DepthSearchNode, V> implements Solver<U, V> {

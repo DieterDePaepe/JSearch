@@ -9,21 +9,21 @@ import com.google.common.collect.Iterables;
  * Implementation of <a href="http://en.wikipedia.org/wiki/IDA*">Iterative Deepening A* (IDA*)</a>. It is guaranteed
  * to find an optimal solution (if one exists) and uses less memory than normal A*
  * ({@link com.github.dieterdepaepe.jsearch.search.statespace.solver.AStarSolver}).
- * <p/>
- * IDA* uses several iterations of depth first search, while limiting the search space to nodes up to a certain cost.
+ *
+ * <p>IDA* uses several iterations of depth first search, while limiting the search space to nodes up to a certain cost.
  * In each iteration, the cost bound is increased to the cost of the cheapest excluded search node from the previous
  * iteration. As a result, the number of iterations depends on the amount of search nodes having an equal total
- * estimated cost. Ideally, it is used for searches where the cost is the length of the path in the search tree.
- * <p/>
- * IDA* has a very low memory footprint. It only keeps {@code d} nodes in memory, with {@code d} being the depth
+ * estimated cost. Ideally, it is used for searches where the cost is the length of the path in the search tree.</p>
+ *
+ * <p>IDA* has a very low memory footprint. It only keeps {@code d} nodes in memory, with {@code d} being the depth
  * in the search tree. There is a computational overhead because search nodes are visited multiple times, but
  * this is typically acceptable in practice if each iteration visits a number of unvisited nodes that is a
- * factor higher compared to the previous iteration.
- * <p/>
- * This solver will not use the
- * {@link com.github.dieterdepaepe.jsearch.search.statespace.SearchNode#getSearchSpaceState()} information.
- * <p/>
- * This implementation is stateless and therefor thread-safe.
+ * factor higher compared to the previous iteration.</p>
+ *
+ * <p>This solver will not use the
+ * {@link com.github.dieterdepaepe.jsearch.search.statespace.SearchNode#getSearchSpaceState()} information.</p>
+ *
+ * <p>This implementation is stateless and therefor thread-safe.</p>
  * @author Dieter De Paepe
  */
 public class IDAStarSolver implements Solver<SearchNode, Object> {

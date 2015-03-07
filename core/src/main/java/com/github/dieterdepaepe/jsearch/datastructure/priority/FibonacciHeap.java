@@ -16,29 +16,28 @@ import java.util.Iterator;
  * Each stored entry has an accompanying key which represents its priority. A lower key value represents a higher
  * priority. Entries will be returned in order of their priority. When 2 entries have the same priority, the order
  * is undefined.
- * <p>
- * This implementation allows for a total of {@code Integer.MAX_VALUE} entries to be stored in a single heap.
- * There are no limitations regarding the values or keys that can be stored within the heap.
- * <p>
- * The Fibonacci heap provides the following worst case running times:
+ *
+ * <p>This implementation allows for a total of {@code Integer.MAX_VALUE} entries to be stored in a single heap.
+ * There are no limitations regarding the values or keys that can be stored within the heap.</p>
+ *
+ * <p>The Fibonacci heap provides the following worst case running times:
  * <ul>
  *     <li>{@code O(1)}: insertion, merging 2 heaps, minimum entry retrieval</li>
  *     <li>{@code O(log n)}, but amortized {@code O(1)}: reducing the key of a stored entry</li>
  *     <li>{@code O(n)}, but amortized {@code O(log n)}: removing the minimum entry, deleting any specified entry</li>
- * </ul>
- * <p>
- * Due to the weak binding of a {@link FibonacciHeapEntry} and its corresponding heap (required for efficiency reasons),
- * all relevant methods are contained in this heap class and use entries as parameters.
+ * </ul></p>
+ *
+ * <p>Due to the weak binding of a {@link FibonacciHeapEntry} and its corresponding heap (required for efficiency
+ * reasons), all relevant methods are contained in this heap class and use entries as parameters.
  * This makes it possible for a user to provide foreign entries as method parameters, corrupting the data structure.
  * We define an <strong>ownership</strong> relation from heap to entry to document these issues. An entry is owned
  * by a heap when that entry is present in that heap. The behaviour of any heap methods taking an entry as
  * parameter is only defined when the parameter entry is owned by that heap. In some cases it can be determined that
  * a provided entry is no longer part of a heap, and that method will throw an {@code IllegalArgumentException} to
  * indicate the mistake. Note that this exception is thrown on a best-effort basis, and cannot be depended on for
- * the correctness of a program.
+ * the correctness of a program.</p>
  *
- * <p>
- * <strong>This implementation is not thread-safe.</strong>
+ * <p>This implementation is not thread-safe.</p>
  *
  * @param <K> the type of the keys stored in this heap
  * @param <V> the type of the values stored in this heap
