@@ -1,5 +1,10 @@
 # Ignore Maven related output
 /target
+*/target
+
+# Ignore IntelliJ related files
+/.idea
+*.iml
 
 *.class
 
