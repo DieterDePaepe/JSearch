@@ -20,9 +20,6 @@ import com.google.common.collect.Iterables;
  * this is typically acceptable in practice if each iteration visits a number of unvisited nodes that is a
  * factor higher compared to the previous iteration.</p>
  *
- * <p>This solver will not use the
- * {@link com.github.dieterdepaepe.jsearch.search.statespace.SearchNode#getSearchSpaceState()} information.</p>
- *
  * <p>This implementation is stateless and therefor thread-safe.</p>
  * @author Dieter De Paepe
  */

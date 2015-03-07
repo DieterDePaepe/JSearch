@@ -1,14 +1,14 @@
 package com.github.dieterdepaepe.jsearch.problem.dummy;
 
 import com.github.dieterdepaepe.jsearch.search.statespace.Cost;
-import com.github.dieterdepaepe.jsearch.search.statespace.SearchNode;
+import com.github.dieterdepaepe.jsearch.search.statespace.StateSearchNode;
 import com.github.dieterdepaepe.jsearch.search.statespace.cost.DoubleCost;
 
 /**
  * Implementation of a {@code SearchNode} for an entirely predefined problem.
  * @author Dieter De Paepe
  */
-public class DummySearchNode implements SearchNode{
+public class DummySearchNode implements StateSearchNode {
     private String name;
     private boolean isGoal;
     private Cost cost;

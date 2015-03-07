@@ -21,9 +21,6 @@ import static com.google.common.base.Preconditions.checkArgument;
  * iteration (such as is the case for collections), the default {@link Object#equals(Object)}
  * implementation will suffice.</p>
  *
- * <p>This solver does not use the {@link com.github.dieterdepaepe.jsearch.search.statespace.SearchNode#getSearchSpaceState()}
- * information.</p>
- *
  * <p>During a search, the solver keeps a maximum number of {@link com.github.dieterdepaepe.jsearch.search.statespace.SearchNode}s
  * in memory. Each expanded node in memory will also track the {@code Iterable} produced by the corresponding
  * {@code SearchNodeGenerator}. Because of this, memory can be saved by having the {@code SearchNodeGenerator}

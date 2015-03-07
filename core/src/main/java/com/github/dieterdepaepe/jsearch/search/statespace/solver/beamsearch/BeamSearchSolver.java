@@ -19,9 +19,6 @@ import java.util.List;
  * see if they are a goal node or not. The search will continue until the search space is exhausted or until
  * instructed by the {@link Manager}.</p>
  *
- * <p>The solver can use the {@link SearchNode#getSearchSpaceState()} information depending on the
- * {@code ParentSelector} chosen.</p>
- *
  * <p>This implementation is thread-safe if the used {@code ParentSelector} is.</p>
  * @author Dieter De Paepe
  */

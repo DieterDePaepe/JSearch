@@ -20,9 +20,6 @@ import java.util.*;
  * expanded. Then the search tree starting at the proper child will be reconstructed until the next best-cost node is
  * encountered. Because of this, performance depends greatly on the structure of the search tree.</p>
  *
- * <p>This solver does not use the {@link com.github.dieterdepaepe.jsearch.search.statespace.SearchNode#getSearchSpaceState()}
- * information.</p>
- *
  * <p>This solver assumes an admissible {@code Heuristic}. Should this assumption be violated, and the heuristic
  * overestimates the remaining cost by a factor of {@code e (> 0)}, the found solution is still guaranteed to be at most
  * <tt>(1 + e)</tt> times more expensive than the actual optimal solution. This technique may be used to speed up

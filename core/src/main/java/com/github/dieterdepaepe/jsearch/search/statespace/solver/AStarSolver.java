@@ -13,9 +13,6 @@ import com.github.dieterdepaepe.jsearch.search.statespace.util.BasicSolution;
  * will be expanded. Because of this, the speed and memory requirements of this solver are greatly depended on
  * the accuracy of the used {@code Heuristic}.</p>
  *
- * <p>This solver does not use the {@link com.github.dieterdepaepe.jsearch.search.statespace.SearchNode#getSearchSpaceState()}
- * information.</p>
- *
  * <p>This solver assumes an admissible {@code Heuristic}. Should this assumption be violated, and the heuristic
  * overestimates the remaining cost by a factor of {@code e (> 0)}, the found solution is still guaranteed to be at most
  * <tt>(1 + e)</tt> times more expensive than the actual optimal solution. This technique may be used to speed up

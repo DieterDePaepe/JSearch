@@ -13,9 +13,6 @@ import static com.google.common.base.Preconditions.checkArgument;
  * for each iteration of beam search. This method is sometimes referred to as <i>local beam search</i>,
  * <i>fixed width beam search</i> or, if {@code n == 1}, <i>greedy local search</i>.
  *
- * <p>This selector will ignore the
- * {@link com.github.dieterdepaepe.jsearch.search.statespace.SearchNode#getSearchSpaceState()} information.</p>
- *
  * <p>This class is thread-safe.</p>
  * @author Dieter De Paepe
  * @see com.github.dieterdepaepe.jsearch.search.statespace.solver.beamsearch.SelectUniqueNBest

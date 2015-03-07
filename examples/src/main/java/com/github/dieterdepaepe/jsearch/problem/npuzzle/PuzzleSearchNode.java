@@ -1,14 +1,14 @@
 package com.github.dieterdepaepe.jsearch.problem.npuzzle;
 
 import com.github.dieterdepaepe.jsearch.datastructure.lightweight.SingleLinkedListing;
-import com.github.dieterdepaepe.jsearch.search.statespace.SearchNode;
+import com.github.dieterdepaepe.jsearch.search.statespace.StateSearchNode;
 import com.github.dieterdepaepe.jsearch.search.statespace.cost.IntegerCost;
 
 /**
  * Implementation of {@code SearchNode} for solving the N-Puzzle problem.
  * @author Dieter De Paepe
  */
-public class PuzzleSearchNode implements SearchNode {
+public class PuzzleSearchNode implements StateSearchNode {
     private PuzzleFields puzzleFields;
     private SingleLinkedListing<Move> moves;
     private IntegerCost movesPerformed;

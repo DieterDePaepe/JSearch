@@ -4,7 +4,7 @@ import com.github.dieterdepaepe.jsearch.datastructure.priority.FibonacciHeap;
 import com.github.dieterdepaepe.jsearch.datastructure.priority.FibonacciHeapEntry;
 import com.github.dieterdepaepe.jsearch.search.statespace.Cost;
 import com.github.dieterdepaepe.jsearch.search.statespace.InformedSearchNode;
-import com.github.dieterdepaepe.jsearch.search.statespace.SearchNode;
+import com.github.dieterdepaepe.jsearch.search.statespace.StateSearchNode;
 import com.google.common.collect.Ordering;
 
 import java.util.HashMap;
@@ -18,7 +18,8 @@ import static com.google.common.base.Preconditions.checkArgument;
  * for each iteration of beam search. This method is sometimes referred to as <i>local beam search</i>,
  * <i>fixed width beam search</i> or, if {@code n == 1}, <i>greedy local search</i>.
  *
- * <p>This selector uses the {@link com.github.dieterdepaepe.jsearch.search.statespace.SearchNode#getSearchSpaceState()}
+ * <p>This selector uses the
+ * {@link com.github.dieterdepaepe.jsearch.search.statespace.StateSearchNode#getSearchSpaceState()}
  * information to identify equivalent search nodes. Equivalent nodes represent the same solution, but might have
  * a different cost. Only the cheapest node of each equivalence group is used for the node selection.</p>
  *
@@ -26,7 +27,7 @@ import static com.google.common.base.Preconditions.checkArgument;
  * @author Dieter De Paepe
  * @see com.github.dieterdepaepe.jsearch.search.statespace.solver.beamsearch.SelectNBest
  */
-public class SelectUniqueNBest implements BeamSearchSolver.ParentSelector<SearchNode, Object> {
+public class SelectUniqueNBest implements BeamSearchSolver.ParentSelector<StateSearchNode, Object> {
     private int n;
 
     /**
@@ -42,7 +43,7 @@ public class SelectUniqueNBest implements BeamSearchSolver.ParentSelector<Search
     }
 
     @Override
-    public <S extends SearchNode> GenerationSelection<S> selectNodesToExpand(Iterable<InformedSearchNode<S>> nodesToChooseFrom, Object environment) {
+    public <S extends StateSearchNode> GenerationSelection<S> selectNodesToExpand(Iterable<InformedSearchNode<S>> nodesToChooseFrom, Object environment) {
         // We reverse the order, so the highest costs have the highest priority in the heap.
         FibonacciHeap<Cost, InformedSearchNode<S>> heap = FibonacciHeap.create(Ordering.<Cost>natural().reverse());
         Map<Object, FibonacciHeapEntry<Cost, InformedSearchNode<S>>> uniqueStates = new HashMap<>();

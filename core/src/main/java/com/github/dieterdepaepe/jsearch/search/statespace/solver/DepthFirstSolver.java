@@ -18,9 +18,6 @@ import java.util.Iterator;
  * wander around the state space without encountering a solution. This problem can be somewhat remedied by defining a
  * maximum depth in the generator, but this is only possible if a maximum solution depth is known beforehand.</p>
  *
- * <p>This solver will not use the
- * {@link com.github.dieterdepaepe.jsearch.search.statespace.SearchNode#getSearchSpaceState()} information.</p>
- *
  * <p>This implementation is stateless and therefor thread-safe.</p>
  * @author Dieter De Paepe
  */

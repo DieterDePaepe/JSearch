@@ -114,9 +114,6 @@ public class SMAStarFrontierTest {
 
         @Override
         public DoubleCost getCost() { return DoubleCost.valueOf(0); }
-
-        @Override
-        public Object getSearchSpaceState() { return this; }
     }
 
     private static class NonEmptyIterable<T> implements Iterable<T> {
