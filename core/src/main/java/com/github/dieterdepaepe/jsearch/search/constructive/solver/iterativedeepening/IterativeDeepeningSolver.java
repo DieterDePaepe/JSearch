@@ -34,7 +34,7 @@ public class IterativeDeepeningSolver<U extends DepthSearchNode, V> implements S
      * Creates a new solver which adds iterative deepening to the given solver.
      * @param solver the solver
      * @param startDepth the maximum depth of all nodes to consider in the first search iteration
-     * @param depthDelta the depth increase per iteration, should be > 0
+     * @param depthDelta the depth increase per iteration, should be {@code > 0}
      */
     public IterativeDeepeningSolver(Solver<? super U, ? super V> solver, int startDepth, int depthDelta) {
         checkNotNull(solver, "Solver may not be null");

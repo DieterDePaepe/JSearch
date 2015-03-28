@@ -20,12 +20,12 @@ import java.util.Iterator;
  * <p>This implementation allows for a total of {@code Integer.MAX_VALUE} entries to be stored in a single heap.
  * There are no limitations regarding the values or keys that can be stored within the heap.</p>
  *
- * <p>The Fibonacci heap provides the following worst case running times:
+ * <p>The Fibonacci heap provides the following worst case running times:</p>
  * <ul>
  *     <li>{@code O(1)}: insertion, merging 2 heaps, minimum entry retrieval</li>
  *     <li>{@code O(log n)}, but amortized {@code O(1)}: reducing the key of a stored entry</li>
  *     <li>{@code O(n)}, but amortized {@code O(log n)}: removing the minimum entry, deleting any specified entry</li>
- * </ul></p>
+ * </ul>
  *
  * <p>Due to the weak binding of a {@link FibonacciHeapEntry} and its corresponding heap (required for efficiency
  * reasons), all relevant methods are contained in this heap class and use entries as parameters.
@@ -52,14 +52,21 @@ public class FibonacciHeap<K, V> implements Iterable<FibonacciHeapEntry<K, V>> {
     private int size;
 
     /**
-     * Creates a new, empty heap that uses the specified comparator for its keys.
+     * Creates a new heap that uses the specified comparator for its keys.
+     * @param keyComparator the comparator used for key ordering
+     * @param <K> the type of keys stored in the heap
+     * @param <V> the type of values stored in the heap
+     * @return an empty heap
      */
     public static <K, V> FibonacciHeap<K, V> create(Comparator<K> keyComparator) {
         return new FibonacciHeap<>(keyComparator);
     }
 
     /**
-     * Creates a new, empty heap which uses the natural ordering of its keys.
+     * Creates a new heap which uses the natural ordering of its keys.
+     * @param <K> the type of keys stored in the heap
+     * @param <V> the type of values stored in the heap
+     * @return an empty heap
      */
     public static <K extends Comparable, V> FibonacciHeap<K, V> create() {
         return new FibonacciHeap<>(Ordering.<K>natural());

@@ -15,11 +15,10 @@ import static com.google.common.base.Preconditions.checkArgument;
  * outside the memory bounded search space.
  *
  * <p><b>Important: </b> This solver assumes a correct implementation of the
- * {@link com.github.dieterdepaepe.jsearch.search.constructive.SearchNode#equals(Object)} to recognise identical states
+ * {@link Object#equals(Object)} to recognise identical states
  * when regenerating discarded children for a certain node. If the {@code Iterable}s returned by the
  * {@link com.github.dieterdepaepe.jsearch.search.constructive.SearchNodeGenerator} doesn't create new objects for each
- * iteration (such as is the case for collections), the default {@link Object#equals(Object)}
- * implementation will suffice.</p>
+ * iteration (such as is the case for collections), the default {@code equals} implementation will suffice.</p>
  *
  * <p>During a search, the solver keeps a maximum number of {@link com.github.dieterdepaepe.jsearch.search.constructive.SearchNode}s
  * in memory. Each expanded node in memory will also track the {@code Iterable} produced by the corresponding
@@ -35,7 +34,7 @@ public class SMAStarSolver implements Solver<SearchNode, Object> {
     /**
      * Creates a new solver instance that will keep at most {@code maxNodesInMemory} nodes in memory.
      * @param maxNodes the maximum number of nodes
-     * @throws java.lang.IllegalArgumentException if {@code maxNodes} is <= 0
+     * @throws java.lang.IllegalArgumentException if {@code maxNodes <= 0}
      */
     public SMAStarSolver(int maxNodes) {
         checkArgument(maxNodes > 0, "Maximum number of nodes in memory should be > 0.");

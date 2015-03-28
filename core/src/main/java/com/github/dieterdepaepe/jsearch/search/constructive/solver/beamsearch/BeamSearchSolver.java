@@ -91,6 +91,7 @@ public class BeamSearchSolver<U extends SearchNode, V> implements Solver<U, V> {
         /**
          * Selects the parent nodes for the next generation of search nodes.
          * @param nodesToChooseFrom the current generation of nodes
+         * @param environment the problem environment
          * @param <S> the actual type of the search nodes
          * @return information about the selected nodes
          */

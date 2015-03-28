@@ -24,7 +24,7 @@ public class SelectNBest implements BeamSearchSolver.ParentSelector<SearchNode, 
      * Creates a new instance that will select the {@code n} best nodes of each generation as parents for the next
      * generation.
      * @param n the number of nodes to select
-     * @throws java.lang.IllegalArgumentException if n <= 0
+     * @throws java.lang.IllegalArgumentException if {@code n <= 0}
      */
     public SelectNBest(int n) {
         checkArgument(n >= 1, "n should be >= 1");

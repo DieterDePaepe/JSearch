@@ -12,12 +12,14 @@ package com.github.dieterdepaepe.jsearch.search.constructive;
  * <p>A heuristic can also be <a href="http://en.wikipedia.org/wiki/Consistent_heuristic">consistent</a> (or monotone),
  * meaning that total goal cost estimation (actual cost + heuristic) will monotonically rise when getting closer to a
  * goal state. More formally, if {@code A} is a state, {@code B} is a successor state of {@code A} and {@code G}
- * is a goal state, the following holds:
+ * is a goal state, the following holds:</p>
+ *
  * <ul>
  *     <li>{@code h(A) <= deltaCost(A, B) + h(B)}</li>
  *     <li>{@code h(G) = 0}</li>
  * </ul>
- * Each consistent heuristic is automatically admissible.</p>
+ *
+ * <p>Each consistent heuristic is automatically admissible.</p>
  *
  * @param <T> the type of search states usable by this heuristic
  * @param <U> the type of the environment accompanied by the search state

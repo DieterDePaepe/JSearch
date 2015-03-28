@@ -101,6 +101,9 @@ public class DroppingTreeSet<E> extends ForwardingNavigableSet<E> {
      * integers), the {@code add} call will throw a
      * {@code ClassCastException}.
      *
+     * @param maximumSize the maximum capacity of this set
+     * @param conserve the specification of which elements should be dropped when
+     *                        the set would grow beyond its {@code maximumSize}
      * @throws IllegalArgumentException if {@code maximumSize < 0}
      * @throws NullPointerException if {@code discardStrategy} is {@code null}
      */
@@ -113,6 +116,9 @@ public class DroppingTreeSet<E> extends ForwardingNavigableSet<E> {
      * using the same ordering as the specified sorted set.
      *
      * @param sortedSet sorted set whose elements will comprise the new set
+     * @param maximumSize the maximum capacity of this set
+     * @param conserve the specification of which elements should be dropped when
+     *                 the set would grow beyond its {@code maximumSize}
      * @throws NullPointerException if the specified sorted set or {@code discardStrategy} is {@code null}
      * @throws IllegalArgumentException if {@code maximumSize < 0} or
      *                                  if the specified sorted set is larger than {@code maximumSize}
@@ -133,6 +139,9 @@ public class DroppingTreeSet<E> extends ForwardingNavigableSet<E> {
      * {@code e2} in the set.
      *
      * @param collection collection whose elements will comprise the new set
+     * @param maximumSize the maximum capacity of this set
+     * @param conserve the specification of which elements should be dropped when
+     *                 the set would grow beyond its {@code maximumSize}
      * @throws ClassCastException   if the elements in {@code c} are
      *                              not {@link Comparable}, or are not mutually comparable
      * @throws NullPointerException if the specified collection or {@code discardStrategy} is null

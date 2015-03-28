@@ -190,6 +190,8 @@ public class SingleLinkedListing<T> {
 
     /**
      * Returns the empty listing.
+     * @param <T> the type of the listing
+     * @return the empty listing
      */
     @SuppressWarnings("unchecked")
     public static <T> SingleLinkedListing<T> of() {
