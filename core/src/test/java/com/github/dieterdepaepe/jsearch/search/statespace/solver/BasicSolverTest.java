@@ -3,10 +3,10 @@ package com.github.dieterdepaepe.jsearch.search.statespace.solver;
 import com.github.dieterdepaepe.jsearch.problem.dummy.DummyGenerator;
 import com.github.dieterdepaepe.jsearch.problem.dummy.DummyHeuristic;
 import com.github.dieterdepaepe.jsearch.problem.dummy.DummySearchNode;
-import com.github.dieterdepaepe.jsearch.search.statespace.SearchNode;
 import com.github.dieterdepaepe.jsearch.search.statespace.Solution;
 import com.github.dieterdepaepe.jsearch.search.statespace.Solver;
 import com.github.dieterdepaepe.jsearch.search.statespace.Solvers;
+import com.github.dieterdepaepe.jsearch.search.statespace.StateSearchNode;
 import com.github.dieterdepaepe.jsearch.search.statespace.cost.DoubleCost;
 import com.github.dieterdepaepe.jsearch.search.statespace.util.BasicManager;
 import com.google.common.collect.ArrayListMultimap;
@@ -24,11 +24,11 @@ import static org.testng.Assert.*;
  * @author Dieter De Paepe
  */
 public abstract class BasicSolverTest {
-    public abstract Solver<SearchNode, Object> getBasicTestSolver();
+    public abstract Solver<? super StateSearchNode, Object> getBasicTestSolver();
 
     @Test
     public void testShouldReturnNothingIfNoStartStates() {
-        Solver<SearchNode, Object> solver = getBasicTestSolver();
+        Solver<? super StateSearchNode, Object> solver = getBasicTestSolver();
 
         DummyGenerator<DummySearchNode> generator = new DummyGenerator<>(ArrayListMultimap.<DummySearchNode, DummySearchNode>create());
         DummyHeuristic heuristic = new DummyHeuristic();
@@ -40,7 +40,7 @@ public abstract class BasicSolverTest {
 
     @Test
     public void testShouldFindNoSolutionIfNonePresent() {
-        Solver<SearchNode, Object> solver = getBasicTestSolver();
+        Solver<? super StateSearchNode, Object> solver = getBasicTestSolver();
 
         ListMultimap<DummySearchNode, DummySearchNode> stateChildren = ArrayListMultimap.create();
         DummyGenerator<DummySearchNode> generator = new DummyGenerator<>(stateChildren);
@@ -71,7 +71,7 @@ public abstract class BasicSolverTest {
 
     @Test
     public void testShouldFindSolutionAmongStartStates() {
-        Solver<SearchNode, Object> solver = getBasicTestSolver();
+        Solver<? super StateSearchNode, Object> solver = getBasicTestSolver();
 
         DummyGenerator<DummySearchNode> generator = new DummyGenerator<>(ArrayListMultimap.<DummySearchNode, DummySearchNode>create());
         DummyHeuristic heuristic = new DummyHeuristic();
@@ -103,7 +103,7 @@ public abstract class BasicSolverTest {
         stateChildren.put(startState2, childState1);
         stateChildren.put(startState2, childState2);
 
-        Solver<SearchNode, Object> solver = getBasicTestSolver();
+        Solver<? super StateSearchNode, Object> solver = getBasicTestSolver();
         DummyGenerator<DummySearchNode> generator = new DummyGenerator<>(stateChildren);
         DummyHeuristic heuristic = new DummyHeuristic();
         BasicManager<DummySearchNode> manager = new BasicManager<>(DoubleCost.valueOf(Double.MAX_VALUE));

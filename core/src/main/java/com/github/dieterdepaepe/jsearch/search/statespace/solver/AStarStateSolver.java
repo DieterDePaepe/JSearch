@@ -3,6 +3,9 @@ package com.github.dieterdepaepe.jsearch.search.statespace.solver;
 import com.github.dieterdepaepe.jsearch.datastructure.priority.FibonacciHeap;
 import com.github.dieterdepaepe.jsearch.search.statespace.*;
 import com.github.dieterdepaepe.jsearch.search.statespace.util.BasicSolution;
+import com.google.common.collect.Maps;
+
+import java.util.Map;
 
 /**
  * An <a href="http://en.wikipedia.org/wiki/A*">A*</a> implementation of a {@link Solver}. It uses a {@link Heuristic}
@@ -10,8 +13,10 @@ import com.github.dieterdepaepe.jsearch.search.statespace.util.BasicSolution;
  * to be optimal (assuming at least one solution state is reachable).
  *
  * <p>During search, nodes are expanded on a best-first basis: each time, the node with the lowest total estimated cost
- * will be expanded. Because of this, the speed and memory requirements of this solver are greatly depended on
- * the accuracy of the used {@code Heuristic}.</p>
+ * will be expanded. The {@link com.github.dieterdepaepe.jsearch.search.statespace.StateSearchNode#getSearchSpaceState()
+ * searchSpaceState} of each node is tracked and used as an additional pruning criteria. The speed and memory
+ * requirements of this solver are greatly depended on the accuracy of the used {@code Heuristic} and the amount of
+ * unique search space states.</p>
  *
  * <p>This solver assumes an admissible {@code Heuristic}. Should this assumption be violated, and the heuristic
  * overestimates the remaining cost by a factor of {@code e (> 0)}, the found solution is still guaranteed to be at most
@@ -21,23 +26,31 @@ import com.github.dieterdepaepe.jsearch.search.statespace.util.BasicSolution;
  *
  * <p>This implementation is stateless and therefor thread-safe.</p>
  *
- * @see com.github.dieterdepaepe.jsearch.search.statespace.solver.AStarStateSolver
+ * @see com.github.dieterdepaepe.jsearch.search.statespace.solver.AStarSolver
  * @author Dieter De Paepe
  */
-public class AStarSolver implements Solver<SearchNode, Object> {
-
+public class AStarStateSolver implements Solver<StateSearchNode, Object> {
     @Override
-    public <S extends SearchNode, E> void solve(Iterable<InformedSearchNode<S>> startNodes,
-                                                E environment,
-                                                Heuristic<? super S, ? super E> heuristic,
-                                                SearchNodeGenerator<S, E> searchNodeGenerator,
-                                                Manager<? super S> manager) {
+    public <S extends StateSearchNode, E> void solve(Iterable<InformedSearchNode<S>> startNodes,
+                                                     E environment,
+                                                     Heuristic<? super S, ? super E> heuristic,
+                                                     SearchNodeGenerator<S, E> searchNodeGenerator,
+                                                     Manager<? super S> manager) {
         FibonacciHeap<Cost, InformedSearchNode<S>> heap = FibonacciHeap.create();
+        Map<Object, Cost> bestEncounteredCostPerState = Maps.newHashMap();
         Cost costBound = manager.getCostBound();
 
-        for (InformedSearchNode<S> startNode : startNodes)
-            if (startNode.getEstimatedTotalCost().compareTo(costBound) <= 0)
+        for (InformedSearchNode<S> startNode : startNodes) {
+            if (startNode.getEstimatedTotalCost().compareTo(costBound) > 0)
+                continue;
+            Object searchSpaceState = startNode.getSearchNode().getSearchSpaceState();
+            Cost stateCost = startNode.getSearchNode().getCost();
+            Cost equalStateCost = bestEncounteredCostPerState.get(searchSpaceState);
+            if (equalStateCost == null || stateCost.compareTo(equalStateCost) < 0) {
                 heap.insert(startNode.getEstimatedTotalCost(), startNode);
+                bestEncounteredCostPerState.put(searchSpaceState, stateCost);
+            }
+        }
 
         while (!heap.isEmpty() && manager.continueSearch()) {
             InformedSearchNode<S> informedNodeToExpand = heap.deleteMinimum().getValue();
@@ -48,6 +61,11 @@ public class AStarSolver implements Solver<SearchNode, Object> {
                 return;
 
             S nodeToExpand = informedNodeToExpand.getSearchNode();
+
+            Object searchSpaceState = nodeToExpand.getSearchSpaceState();
+            if (bestEncounteredCostPerState.get(searchSpaceState).compareTo(nodeToExpand.getCost()) < 0)
+                continue;
+
             if (nodeToExpand.isGoal()) {
                 manager.registerSolution(new BasicSolution<>(nodeToExpand, true));
                 return;
@@ -56,8 +74,15 @@ public class AStarSolver implements Solver<SearchNode, Object> {
             for (InformedSearchNode<S> successor : searchNodeGenerator.generateSuccessorNodes(nodeToExpand, environment, heuristic)) {
                 Cost estimatedTotalCost = successor.getEstimatedTotalCost();
                 // Since A* can be very memory expensive, we do a premature purging of search nodes.
-                if (estimatedTotalCost.compareTo(costBound) <= 0)
+                if (estimatedTotalCost.compareTo(costBound) > 0)
+                    continue;
+                Object successorSearchSpaceState = successor.getSearchNode().getSearchSpaceState();
+                Cost stateCost = successor.getSearchNode().getCost();
+                Cost equalStateCost = bestEncounteredCostPerState.get(successorSearchSpaceState);
+                if (equalStateCost == null || stateCost.compareTo(equalStateCost) < 0) {
                     heap.insert(estimatedTotalCost, successor);
+                    bestEncounteredCostPerState.put(successorSearchSpaceState, stateCost);
+                }
             }
         }
     }
