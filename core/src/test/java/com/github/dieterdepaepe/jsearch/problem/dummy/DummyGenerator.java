@@ -1,9 +1,9 @@
 package com.github.dieterdepaepe.jsearch.problem.dummy;
 
-import com.github.dieterdepaepe.jsearch.search.statespace.Heuristic;
-import com.github.dieterdepaepe.jsearch.search.statespace.InformedSearchNode;
-import com.github.dieterdepaepe.jsearch.search.statespace.SearchNode;
-import com.github.dieterdepaepe.jsearch.search.statespace.SearchNodeGenerator;
+import com.github.dieterdepaepe.jsearch.search.constructive.Heuristic;
+import com.github.dieterdepaepe.jsearch.search.constructive.InformedSearchNode;
+import com.github.dieterdepaepe.jsearch.search.constructive.SearchNode;
+import com.github.dieterdepaepe.jsearch.search.constructive.SearchNodeGenerator;
 import com.google.common.collect.ListMultimap;
 
 import java.util.ArrayList;

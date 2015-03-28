@@ -1,7 +1,7 @@
 package com.github.dieterdepaepe.jsearch.problem.dummy;
 
-import com.github.dieterdepaepe.jsearch.search.statespace.Cost;
-import com.github.dieterdepaepe.jsearch.search.statespace.Heuristic;
+import com.github.dieterdepaepe.jsearch.search.constructive.Cost;
+import com.github.dieterdepaepe.jsearch.search.constructive.Heuristic;
 
 /**
  * {@code Heuristic} implementation for {@code DummySearchNode}s, which simply reads the heuristic value stored within.

@@ -1,11 +1,11 @@
 package com.github.dieterdepaepe.jsearch.problem.npuzzle;
 
-import com.github.dieterdepaepe.jsearch.search.statespace.Solution;
-import com.github.dieterdepaepe.jsearch.search.statespace.Solver;
-import com.github.dieterdepaepe.jsearch.search.statespace.Solvers;
-import com.github.dieterdepaepe.jsearch.search.statespace.cost.DoubleCost;
-import com.github.dieterdepaepe.jsearch.search.statespace.solver.AStarSolver;
-import com.github.dieterdepaepe.jsearch.search.statespace.util.BasicManager;
+import com.github.dieterdepaepe.jsearch.search.constructive.Solution;
+import com.github.dieterdepaepe.jsearch.search.constructive.Solver;
+import com.github.dieterdepaepe.jsearch.search.constructive.Solvers;
+import com.github.dieterdepaepe.jsearch.search.constructive.cost.DoubleCost;
+import com.github.dieterdepaepe.jsearch.search.constructive.solver.AStarSolver;
+import com.github.dieterdepaepe.jsearch.search.constructive.util.BasicManager;
 
 import java.util.Arrays;
 import java.util.List;

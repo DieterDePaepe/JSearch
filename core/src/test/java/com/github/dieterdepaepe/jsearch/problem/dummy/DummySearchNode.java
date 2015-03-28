@@ -1,8 +1,8 @@
 package com.github.dieterdepaepe.jsearch.problem.dummy;
 
-import com.github.dieterdepaepe.jsearch.search.statespace.Cost;
-import com.github.dieterdepaepe.jsearch.search.statespace.StateSearchNode;
-import com.github.dieterdepaepe.jsearch.search.statespace.cost.DoubleCost;
+import com.github.dieterdepaepe.jsearch.search.constructive.Cost;
+import com.github.dieterdepaepe.jsearch.search.constructive.StateSearchNode;
+import com.github.dieterdepaepe.jsearch.search.constructive.cost.DoubleCost;
 
 /**
  * Implementation of a {@code SearchNode} for an entirely predefined problem.

@@ -1,9 +1,9 @@
 package com.github.dieterdepaepe.jsearch.problem.npuzzle;
 
 import com.github.dieterdepaepe.jsearch.datastructure.lightweight.SingleLinkedListing;
-import com.github.dieterdepaepe.jsearch.search.statespace.Heuristic;
-import com.github.dieterdepaepe.jsearch.search.statespace.InformedSearchNode;
-import com.github.dieterdepaepe.jsearch.search.statespace.SearchNodeGenerator;
+import com.github.dieterdepaepe.jsearch.search.constructive.Heuristic;
+import com.github.dieterdepaepe.jsearch.search.constructive.InformedSearchNode;
+import com.github.dieterdepaepe.jsearch.search.constructive.SearchNodeGenerator;
 
 import java.util.ArrayList;
 import java.util.List;

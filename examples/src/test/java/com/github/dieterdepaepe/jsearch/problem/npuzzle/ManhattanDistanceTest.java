@@ -1,7 +1,7 @@
 package com.github.dieterdepaepe.jsearch.problem.npuzzle;
 
 
-import com.github.dieterdepaepe.jsearch.search.statespace.cost.IntegerCost;
+import com.github.dieterdepaepe.jsearch.search.constructive.cost.IntegerCost;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.assertEquals;

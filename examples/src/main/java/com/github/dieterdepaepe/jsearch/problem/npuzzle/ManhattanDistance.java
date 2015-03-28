@@ -1,7 +1,7 @@
 package com.github.dieterdepaepe.jsearch.problem.npuzzle;
 
-import com.github.dieterdepaepe.jsearch.search.statespace.Heuristic;
-import com.github.dieterdepaepe.jsearch.search.statespace.cost.IntegerCost;
+import com.github.dieterdepaepe.jsearch.search.constructive.Heuristic;
+import com.github.dieterdepaepe.jsearch.search.constructive.cost.IntegerCost;
 
 /**
  * Manhattan distance heuristic for N-Puzzle. It estimates the remaining cost as the total distance that each field
