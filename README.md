@@ -59,5 +59,9 @@ The examples folder contains implementations for the [N-Puzzle](http://en.wikipe
 Once defined, you pick an algorithm (an implementation of ```Solver```) and start the search using the ```Solvers``` helper class. For examples, refer to the examples folder.
 
 
+Alternative Libraries
+=====================
 
-
+[OptaPlanner](http://www.optaplanner.org/) is another optimisation library that is definitely worth checking out. It is more extensive than JSearch and more actively developed. A short comparison is given:
+- JSearch focusses on constructive search, so it more suited for problems where the search path is important (Eg: pathfinding in a graph, finding the best way to solve a Rubics Cube,...) or where a garanteed optimal solution is needed.
+- OptaPlanner focusses on local search, it is more suited for problems with many variables or problems where it is difficult to determine the quality of a partial solution. It is definitely more scalable than JSearch for large, complex problems.
