@@ -8,14 +8,14 @@ import com.google.common.collect.Maps;
 import java.util.Map;
 
 /**
- * An <a href="http://en.wikipedia.org/wiki/A*">A*</a> implementation of a {@link Solver}. It uses a {@link Heuristic}
- * to minimise the number of expanded nodes. It will always find a single {@link Solution}, which is guaranteed
- * to be optimal (assuming at least one solution state is reachable).
+ * An <a href="http://en.wikipedia.org/wiki/A*">A*</a> implementation of a {@link Solver}. This solver will expand all
+ * nodes whose total estimated cost is lower or equal to cost of the best solution. This solver is guaranteed to
+ * find the optimal {@link Solution}, presuming that a solution is reachable.
  *
  * <p>During search, nodes are expanded on a best-first basis: each time, the node with the lowest total estimated cost
  * will be expanded. The {@link com.github.dieterdepaepe.jsearch.search.statespace.StateSearchNode#getSearchSpaceState()
  * searchSpaceState} of each node is tracked and used as an additional pruning criteria. The speed and memory
- * requirements of this solver are greatly depended on the accuracy of the used {@code Heuristic} and the amount of
+ * requirements of this solver are greatly depended on the accuracy of the used {@link Heuristic} and the amount of
  * unique search space states.</p>
  *
  * <p>This solver assumes an admissible {@code Heuristic}. Should this assumption be violated, and the heuristic
@@ -68,7 +68,6 @@ public class AStarStateSolver implements Solver<StateSearchNode, Object> {
 
             if (nodeToExpand.isGoal()) {
                 manager.registerSolution(new BasicSolution<>(nodeToExpand, true));
-                return;
             }
 
             for (InformedSearchNode<S> successor : searchNodeGenerator.generateSuccessorNodes(nodeToExpand, environment, heuristic)) {

@@ -63,7 +63,7 @@ public class AStarSolverTest extends BasicSolverTest {
 
         Solvers.solve(solver, manager, generator, heuristic, null, a);
 
-        assertEquals(generator.getExpandedNodes(), Arrays.asList(a, b, c, d, e));
+        assertEquals(generator.getExpandedNodes(), Arrays.asList(a, b, c, d, e, f));
         assertEquals(manager.getSolution().getNode(), f);
         assertTrue(manager.getSolution().isOptimal());
     }
