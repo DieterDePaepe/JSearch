@@ -21,18 +21,18 @@ Various AI problem solving techniques are bundled, suited for varying types of p
 Installation
 ============
 
-You can use JSearch as a Maven dependency (coming soon):
+You can use JSearch as a Maven dependency:
 ``` xml
 <dependency>
    <groupId>com.github.dieterdepaepe</groupId>
    <artifactId>jsearch-core</artifactId>
-   <version>0.1</version>
+   <version>1.0.0</version>
 </dependency>
 <!-- Contains examples, not needed for actual usage -->
 <dependency>
    <groupId>com.github.dieterdepaepe</groupId>
    <artifactId>jsearch-examples</artifactId>
-   <version>0.1</version>
+   <version>1.0.0</version>
 </dependency>
 ```
 
@@ -40,6 +40,8 @@ Or build it yourself:
 ``` bash
 git clone https://github.com/DieterDePaepe/JSearch.git
 cd JSearch
+# optional: checkout a version
+# git checkout 1.0.0
 mvn package
 # jars are found in the target folders
 ```
