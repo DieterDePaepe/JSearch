@@ -1,3 +1,5 @@
+[![Javadocs](http://javadoc.io/badge/com.github.dieterdepaepe/jsearch-core.svg)](http://javadoc.io/doc/com.github.dieterdepaepe/jsearch-core)
+
 JSearch
 =======
 
