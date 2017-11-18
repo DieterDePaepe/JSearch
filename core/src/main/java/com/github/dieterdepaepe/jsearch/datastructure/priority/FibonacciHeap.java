@@ -5,10 +5,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Ordering;
 
-import java.util.AbstractCollection;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Iterator;
+import java.util.*;
 
 /**
  * A <a href="http://en.wikipedia.org/wiki/Fibonacci_heap">Fibonacci heap</a> is an efficient priority queue which
@@ -94,7 +91,7 @@ public class FibonacciHeap<K, V> implements Iterable<FibonacciHeapEntry<K, V>> {
             minTreeRoot = newTreeRoot;
             newTreeRoot.nextSibling = newTreeRoot;
             newTreeRoot.prevSibling = newTreeRoot;
-        } else  {
+        } else {
             insertBehind(newTreeRoot, minTreeRoot);
             if (keyComparator.compare(newTreeRoot.key, minTreeRoot.key) <= -1)
                 minTreeRoot = newTreeRoot;
@@ -418,7 +415,7 @@ public class FibonacciHeap<K, V> implements Iterable<FibonacciHeapEntry<K, V>> {
      */
     public Iterator<FibonacciHeapEntry<K, V>> iterator() {
         if (isEmpty())
-            return Iterators.emptyIterator();
+            return Collections.emptyIterator();
         else
             return new FibonacciHeapIterator<>(minTreeRoot);
     }
