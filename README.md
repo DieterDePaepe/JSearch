@@ -28,7 +28,7 @@ You can use JSearch as a Maven dependency:
 <dependency>
    <groupId>com.github.dieterdepaepe</groupId>
    <artifactId>jsearch-core</artifactId>
-   <version>1.0.0</version>
+   <version>1.0.1</version>
 </dependency>
 <!-- Contains examples, not needed for actual usage -->
 <dependency>
@@ -43,7 +43,7 @@ Or build it yourself:
 git clone https://github.com/DieterDePaepe/JSearch.git
 cd JSearch
 # optional: checkout a version
-# git checkout 1.0.0
+# git checkout 1.0.1
 mvn package
 # jars are found in the target folders
 ```
